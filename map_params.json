@@ -1,0 +1,180 @@
+{
+    "tbllangue": {
+        "nomlangue": 1
+    },
+    "tblchart": {
+        "ylabelchart": 1
+    },
+    "tblchartvalue": {
+        "xvaluechart": 1,
+        "seriedatachart": 2,
+        "xlabelchart": 3
+    },
+    "tblbenchmark": {
+        "nombenchmark": 1,
+        "xlabelbenchmark": 2,
+        "ylabelbenchmark": 3
+    },
+    "tblbenchmarkvalue": {},
+    "tblsolution": {
+        "nomsolution": 1,
+        "principesolution": 2,
+        "imgprincipesolution": 3,
+        "titreimgprincipesolution": 4,
+        "applisolution": 5,
+        "bilanenergiesolution": 6,
+        "imgbilanenergiesolution": 7,
+        "titreimgbilanenergiesolution": 8,
+        "postereglepoucecoutsolution": 9,
+        "difficultecoutsolution": 10,
+        "posteeconomiegainsolution": 11,
+        "effetsgainsolution": 12
+    },
+    "tbllicense": {},
+    "tblzone": {
+        "nomzone": 1
+    },
+    "tblpays": {
+        "nompays": 1
+    },
+    "tblregion": {
+        "nomregion": 1
+    },
+    "tblenergie": {
+        "nomenergie": 1
+    },
+    "tblmois": {
+        "nommois": 1
+    },
+    "tblperiode": {
+        "nomperiode": 1
+    },
+    "tblmonnaie": {
+        "nommonnaie": 1
+    },
+    "tbltaxe": {
+        "sigletaxe": 1,
+        "nomtaxe": 2
+    },
+    "tblpublic": {
+        "nompublic": 1
+    },
+    "tblreseau": {
+        "nomreseau": 1
+    },
+    "tbltravaux": {
+        "nomtravaux": 1
+    },
+    "tblunite": {
+        "nomunite": 1
+    },
+    "tblsource": {},
+    "tblreferenceformat": {
+        "nomreferenceformat": 1
+    },
+    "tblreferencetype": {
+        "siglereferencetype": 1,
+        "nomreferencetype": 2
+    },
+    "tblreference": {
+        "nomreference": 1
+    },
+    "tblgroupetechno": {
+        "nomgroupetechno": 1
+    },
+    "tbltechno": {
+        "nomtechno": 1,
+        "definitiontechno": 2,
+        "applitechno": 3,
+        "imgapplitechno": 4,
+        "titreimgapplitechno": 5,
+        "imgenjeuxtechno": 6,
+        "titreimgenjeuxtechno": 7,
+        "couttechno": 8,
+        "imgcouttechno": 9,
+        "titreimgcouttechno": 10,
+        "opextechno": 11,
+        "imgsystemetechno": 12,
+        "systemetechno": 13,
+        "titreimgsystemetechno": 14,
+        "comparaisontechno": 15,
+        "imgcomparaisontechno": 16,
+        "titreimgcomparaisontechno": 17,
+        "specstechno": 18,
+        "imgspecstechno": 19,
+        "titreimgspecstechno": 20
+    },
+    "tblenjeuxtechno": {
+        "txtenjeuxtechno": 1
+    },
+    "tblnormetechno": {
+        "txtnormetechno": 1
+    },
+    "tblsysteme": {
+        "nomsysteme": 1
+    },
+    "tblgroupesecteur": {
+        "nomgroupesecteur": 1
+    },
+    "tblsecteur": {
+        "nomsecteur": 1,
+        "definitionsecteur": 2,
+        "imgenjeuxsecteur": 3,
+        "titreimgenjeuxsecteur": 4
+    },
+    "tblchiffresecteur": {
+        "txtchiffresecteur": 1
+    },
+    "tblconsosecteur": {
+        "txtconsosecteur": 1
+    },
+    "tblenjeuxsecteur": {
+        "txtenjeuxsecteur": 1
+    },
+    "tblcatsolution": {
+        "nomcatsolution": 1
+    },
+    "tblautodiag": {
+        "memoautodiag": 1
+    },
+    "tblrex": {
+        "entiterex": 1,
+        "commentaireratiorex": 2
+    },
+    "tblcoutrex": {
+        "postecoutrex": 1
+    },
+    "tblgainrex": {
+        "postegainrex": 1
+    },
+    "tblmecanisme": {
+        "nommecanisme": 1
+    },
+    "tblarretecee": {
+        "nomarrete": 1
+    },
+    "tblceetheme": {
+        "nomceetheme": 1
+    },
+    "tblceegroupe": {
+        "nomceegroupe": 1
+    },
+    "tblfinancement": {
+        "nomfinancement": 1,
+        "beneficiairefinancement": 2,
+        "secteurfinancement": 3,
+        "denominationfinancement": 4,
+        "criterefinancement": 5,
+        "montantfinancement": 6,
+        "dureeviefinancement": 7
+    },
+    "tblfinancementrex": {
+        "debutfinancementrex": 1,
+        "finfinancementrex": 2,
+        "partenairefinancementrex": 3
+    },
+    "tblfinancementsolution": {},
+    "tblopportunite": {
+        "nomopportunite": 1
+    }
+}
