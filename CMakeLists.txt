@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.28)
+project(project_solution_finder_ultimate_backend)
+
+set(CMAKE_CXX_STANDARD 26)
+
+add_executable(project_solution_finder_ultimate_backend main.cpp)
