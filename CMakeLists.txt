@@ -4,3 +4,7 @@ project(project_solution_finder_ultimate_backend)
 set(CMAKE_CXX_STANDARD 26)
 
 add_executable(project_solution_finder_ultimate_backend main.cpp)
+
+find_package(cpprestsdk REQUIRED)
+
+target_link_libraries(project_solution_finder_ultimate_backend cpprestsdk::cpprest)
