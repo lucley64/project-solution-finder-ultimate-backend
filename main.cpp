@@ -10,6 +10,11 @@ using web::json::value, web::json::array;
 using std::vector, std::string, std::map, std::cout, std::endl, std::pair;
 using concurrency::streams::istream;
 
+/**
+ * Reads the body of a request and returns it as a string
+ * @param stream The input stream.
+ * @return The raw body.
+ */
 string read_body_to_end(const istream& stream) {
     auto stream_buffer = stream.streambuf();
     string ret;
@@ -21,6 +26,11 @@ string read_body_to_end(const istream& stream) {
     return ret;
 }
 
+/**
+ * Parse a raw formdata and returns a map from this data.
+ * @param input The raw form input.
+ * @return A map of the data.
+ */
 map<string, string> parse_form_input(const string& input) {
     string s = input;
     const string delim = "\r\n-";
@@ -42,6 +52,10 @@ map<string, string> parse_form_input(const string& input) {
     return ret;
 }
 
+/**
+ * Gets the data from a form and awnser with a json of the data.
+ * @param request The content of the request.
+ */
 void get_items(const http_request& request) {
     // auto test = request.body().streambuf();
 
@@ -59,6 +73,10 @@ void get_items(const http_request& request) {
     auto req = request.reply(response);
 }
 
+/**
+ * Main function, Opens the port and waits for requests.
+ *
+ */
 [[noreturn]] int main() {
     http_listener listener("http://localhost:8080");
     listener.support(methods::POST, get_items);
@@ -66,6 +84,8 @@ void get_items(const http_request& request) {
 
     std::cout << "Server listening on http://localhost:8080" << std::endl;
 
-    while (true) {
+    string input;
+    while (!input.empty()) {
+        std::cin >> input;
     }
 }
