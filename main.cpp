@@ -4,7 +4,7 @@
 #include <cpprest/http_listener.h>
 #include <cpprest/json.h>
 
-using web::http::http_request, web::http::status_codes, web::http::methods;
+using web::http::http_request, web::http::status_codes, web::http::methods, web::http::http_response;
 using web::http::experimental::listener::http_listener;
 using web::json::value, web::json::array;
 using std::vector, std::string, std::map, std::cout, std::endl, std::pair;
@@ -19,29 +19,22 @@ string read_body_to_end(const istream& stream) {
     }
 
     return ret;
-
 }
 
 map<string, string> parse_form_input(const string& input) {
     string s = input;
-    const string delim = "-----formdata-undici-";
+    const string delim = "\r\n-";
     const string name_delim = "name=\"";
     map<string, string> ret;
-
-    size_t pos = s.find(delim);
-    while (pos != string::npos) {
-        s.erase(0,  pos + delim.size() + 14);
-        pos = s.find(delim);
-        if (pos != string::npos) {
-            string tok = s.substr(0, pos);
-            if (const size_t name_start = tok.find(name_delim); name_start != string::npos) {
-                tok.erase(0, name_start + name_delim.size());
-                if (const size_t name_end = tok.find('"'); name_end != string::npos) {
-                    const string name = tok.substr(0, name_end);
-                    tok.erase(0, name_end + 1);
-                    const string content = tok.substr(0, tok.length() - 1);
-                    ret.emplace(name, content);
-                }
+    size_t name_start = 0;
+    while ((name_start = s.find(name_delim)) != string::npos) {
+        s.erase(0, name_start + name_delim.size());
+        if (const size_t name_end = s.find('"'); name_end != string::npos) {
+            const string name = s.substr(0, name_end);
+            s.erase(0, name_end + 1);
+            if (const size_t end = s.find(delim); end != string::npos) {
+                const string content = s.substr(0, end);
+                ret.emplace(name, content);
             }
         }
     }
@@ -50,16 +43,20 @@ map<string, string> parse_form_input(const string& input) {
 }
 
 void get_items(const http_request& request) {
-
     // auto test = request.body().streambuf();
 
-
+    cout << "recived" << endl;
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
-    const value response = value::object();
+    const value json_rep = value::object({{"aaa", value{"bbb"}}});
 
-    auto req = request.reply(status_codes::OK, response);
+    http_response response{status_codes::OK};
+
+    response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+    response.set_body(json_rep);
+
+    auto req = request.reply(response);
 }
 
 [[noreturn]] int main() {
@@ -71,5 +68,4 @@ void get_items(const http_request& request) {
 
     while (true) {
     }
-
 }
