@@ -80,12 +80,18 @@ void get_items(const http_request& request) {
 [[noreturn]] int main() {
     http_listener listener("http://localhost:8080");
     listener.support(methods::POST, get_items);
+    listener.support(methods::GET, [](const http_request& request) {
+        cout << "No, not yet." << endl;
+        cout << request.relative_uri().to_string() << endl;
+        auto _ = request.reply(status_codes::NotImplemented);
+        //TODO add support to get requests
+    });
     const auto req = listener.open();
 
     std::cout << "Server listening on http://localhost:8080" << std::endl;
 
     string input;
-    while (!input.empty()) {
+    while (input.empty()) {
         std::cin >> input;
     }
 }
