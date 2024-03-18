@@ -87,10 +87,8 @@ def semantic_search(df, query):
     for i in range(0, len(str_sols_text)):
         corpus_embeddings.append(str_sols_text[i])
     corpus_embeddings = embedder.encode(corpus_embeddings, convert_to_tensor = True)
-    print("--------------------------------------------------")
     # Without normalize
-    results = util.semantic_search(query_embedding, corpus_embeddings)
-    print(results)
+    results = util.semantic_search(query_embedding, corpus_embeddings, top_k = 5)
     # corpus_id should correspond to the index of the row within df
     print("-------------------------------")
     # Check how to generate csv file with all sectors and then take the one needed
