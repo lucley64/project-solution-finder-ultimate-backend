@@ -1,4 +1,4 @@
-import re
+from re import sub
 from enum import Enum
 from pandas import read_csv, concat, DataFrame
 from sentence_transformers import SentenceTransformer, util
@@ -55,9 +55,9 @@ def preprocess(string_text):
     space_pattern = "\\s+"
     not_applicable_pattern = "- N/A -"
     tag_pattern = "<[^>]*>"
-    parsed_text = re.sub(space_pattern, ' ', parsed_text)
-    parsed_text = re.sub(not_applicable_pattern, ' ', parsed_text)
-    parsed_text = re.sub(tag_pattern, ' ', parsed_text)
+    parsed_text = sub(space_pattern, ' ', parsed_text)
+    parsed_text = sub(not_applicable_pattern, ' ', parsed_text)
+    parsed_text = sub(tag_pattern, ' ', parsed_text)
     parsed_text = parsed_text.replace("\t", "")
     parsed_text = parsed_text.strip()
     return(parsed_text)
