@@ -62,7 +62,6 @@ def preprocess(string_text):
     parsed_text = parsed_text.strip()
     return(parsed_text)
 
-# ToDO : Check useless comments
 def semantic_search(df, query):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('Using device:', device)
@@ -97,6 +96,7 @@ def semantic_search(df, query):
         print("score : " + str(results[0][i]['score']))
         print(df.loc[df.index == results[0][i]['corpus_id']])
         print("-------------------------------------")
+    return(results)
 
 dataset_path = "./model/textSolModel.csv"
 all_df = read_csv(dataset_path, sep = ',', engine = 'python', quotechar = '"')
