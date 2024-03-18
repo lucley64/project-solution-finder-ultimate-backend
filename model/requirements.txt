@@ -26,10 +26,14 @@ six==1.16.0
 sympy==1.12
 threadpoolctl==3.3.0
 tokenizers==0.15.2
-# Add condition to allow torch to use GPU, especially for a remote device
-torch==2.2.1+cpu
-torchaudio==2.2.1+cpu
-torchvision==0.17.1+cpu
+# for CUDA 11.8 torch
+--index-url https://download.pytorch.org/whl/cu118
+torch==2.2.1
+torchaudio==2.2.1
+torchvision==0.17.1
+# torch==2.2.1+cpu
+# torchaudio==2.2.1+cpu
+# torchvision==0.17.1+cpu
 tqdm==4.66.2
 transformers==4.38.2
 typing_extensions==4.8.0
