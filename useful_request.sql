@@ -20,7 +20,7 @@ FROM tblsolution
                    WHERE typedictionnaire = 'tec'
                      AND codelangue = "2") tblnomtechno
                   ON
-                      tblnomtechno.codeappelobjet = tbltechno.numtechno
+                      tblnomtechno.codeappelobjet = tbltechno.numtechno;
 
 -- Description all solutions
 SELECT indexdictionnaire, traductiondictionnaire
