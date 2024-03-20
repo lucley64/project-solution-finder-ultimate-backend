@@ -26,4 +26,22 @@ FROM tblsolution
 SELECT indexdictionnaire, traductiondictionnaire
 FROM tbldictionnaire
 WHERE typedictionnaire = 'sol'
-  AND codelangue = "2"
+  AND codelangue = "2";
+
+SELECT
+    tblsolution.*,
+    tblsolution.codecatsolution AS numcatsolution,
+    tbltechno.numtechno,
+    tbltechno.imgtechno,
+    tblsolution.codereferencegain as codegainreference,
+    tblsolution.codemonnaiegain as codemonnaiegain,
+    tblsolution.codeunitegain as codeunitegain,
+    tblsolution.reglepouceminicoutsolution,
+    tblsolution.reglepoucemaxicoutsolution,
+    tblsolution.jaugecoutsolution,
+    tblsolution.codereferencecout as codecoutreference,
+    tblsolution.codemonnaiecout as codemonnaiecout,
+    tblsolution.codeunitecout as codeunitecout
+FROM tblsolution
+         LEFT JOIN tbltechno
+                   ON tbltechno.numtechno = tblsolution.codetechno;
