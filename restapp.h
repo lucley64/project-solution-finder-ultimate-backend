@@ -30,7 +30,7 @@ public:
 
     void export_data() const;
 
-    ~restapp();;
+    ~restapp();
 };
 
 

@@ -1,6 +1,5 @@
 #include <string>
 #include <cpprest/http_client.h>
-#include <cpprest/http_listener.h>
 
 #include "restapp.h"
 
