@@ -71,7 +71,7 @@ void handle_post(const http_request& request) {
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
-    const value json_rep = value::array({value{5}, value{9}, value{6174}});
+    const value json_rep = value::array({value{5}, value{9}, value{495}});
 
     http_response response{status_codes::OK};
 
