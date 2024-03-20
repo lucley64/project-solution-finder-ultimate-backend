@@ -4,7 +4,6 @@
 
 #ifndef MAP_PARAM_TRAD_H
 #define MAP_PARAM_TRAD_H
-#include <fstream>
 #include <string>
 #include <cpprest/json.h>
 

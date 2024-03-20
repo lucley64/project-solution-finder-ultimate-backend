@@ -1,4 +1,3 @@
-#include <charconv>
 #include <string>
 #include <cpprest/http_client.h>
 #include <cpprest/http_listener.h>
@@ -19,9 +18,9 @@ int main(const int argc, char** argv) {
     }
 
 
-    const string database_name = argv[1];
+    const string database_name = string("file://") + argv[1];
     restapp app(
-        "file:///home/cytech/Travail/S4/Projects/project-solution-finder-ultimate/project-solution-finder-ultimate-backend/plateforme.db");
+        database_name);
 
     if (argc > 2 && string(argv[2]) == "--export") {
         app.export_data();
