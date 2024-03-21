@@ -65,13 +65,23 @@ map<string, string> parse_form_input(const string& input) {
  * @param request The content of the request.
  */
 void handle_post(const http_request& request) {
+
     // auto test = request.body().streambuf();
 
-    cout << "recived" << endl;
+#ifdef MY_DEBUG
+    cout << "Recieving post request"  << endl;
+#endif
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
-    const value json_rep = value::array({value{5}, value{9}, value{495}});
+    const value json_rep = value::array(
+        {
+            value::object({{"nb_sol", 12}, {"financial_cost", .5}, {"financial_gain", .5}}),
+            value::object({{"nb_sol", 8}, {"financial_cost", .5}, {"financial_gain", .5}}),
+            value::object({{"nb_sol", 22}, {"financial_cost", .5}, {"financial_gain", .5}}),
+            value::object({{"nb_sol", 42}, {"financial_cost", .5}, {"financial_gain", .5}}),
+            value::object({{"nb_sol", 136}, {"financial_cost", .5}, {"financial_gain", .5}}),
+        });
 
     http_response response{status_codes::OK};
 
