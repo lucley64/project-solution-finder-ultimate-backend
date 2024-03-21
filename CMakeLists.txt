@@ -3,6 +3,8 @@ project(project_solution_finder_ultimate_backend)
 
 set(CMAKE_CXX_STANDARD 26)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMY_DEBUG")
+
 add_executable(project_solution_finder_ultimate_backend main.cpp
         restapp.cpp
         restapp.h

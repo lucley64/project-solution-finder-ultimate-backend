@@ -101,12 +101,18 @@ vector<string> parse_uri(const string& uri) {
 std::map<string, value> do_work(const string& code_lang, const database_req& req,
                                 const std::map<const std::string, const std::string>& sol_details) {
     const string& sol_num = sol_details.at("numsolution");
+#ifdef MY_DEBUG
+    cout << "Collecting data for solution no " << sol_num << endl;
+#endif
     std::map<string, value> solution_map;
     solution_map.emplace("solution_details", value::object(
                              vector<std::pair<string, value>>(sol_details.begin(),
                                                               sol_details.end())));
     if (sol_details.contains("codeparentsolution")) {
         const auto code_parent_sol = sol_details.at("codeparentsolution");
+#ifdef MY_DEBUG
+        cout << "Collecting data for parent solution no " << code_parent_sol << endl;
+#endif
         std::map<string, value> solution_desc_map;
         for (auto ret_sol_map = req.get_solution_desc(sol_num, code_lang); const auto& [key, value]: ret_sol_map) {
             solution_desc_map.emplace(key, value);
@@ -175,6 +181,9 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
 }
 
 void restapp::handle_get(const http_request& request) const {
+#ifdef MY_DEBUG
+    cout << "Reciving get request." << endl;
+#endif
     const auto uri = request.relative_uri();
     const auto parsed_uri = parse_uri(uri.path());
     auto code = status_codes::OK;
@@ -183,6 +192,10 @@ void restapp::handle_get(const http_request& request) const {
     if (parsed_uri.size() >= 2) {
         const string& sol_num = parsed_uri[0];
         const string& code_lang = parsed_uri[1];
+
+#ifdef MY_DEBUG
+        cout << "Uri parsed with at least 2 arguments." << endl;
+#endif
 
         stringstream sql_solution_details;
         sql_solution_details << "SELECT * FROM tblsolution WHERE numsolution = " << sol_num;
@@ -201,21 +214,34 @@ void restapp::handle_get(const http_request& request) const {
 }
 
 restapp::restapp(std::string database_name): database_name(std::move(database_name)) {
+#ifdef MY_DEBUG
+    cout << "Initializing app." << endl;
+#endif
     listener = http_listener(address);
     listener.support(web::http::methods::GET, [this](const http_request& request) { handle_get(request); });
     listener.support(web::http::methods::POST, handle_post);
 }
 
 void restapp::start() {
+#ifdef MY_DEBUG
+    cout << "Starting app." << endl;
+#endif
     std::cout << "Server listening on http://localhost:8080" << std::endl;
     listener.open();
 }
 
 void restapp::stop() {
+#ifdef MY_DEBUG
+    cout << "Stopping app." << endl;
+#endif
     listener.close();
 }
 
 void restapp::export_data() const {
+#ifdef MY_DEBUG
+    cout << "Eporting data to ../jolutions.json." << endl;
+#endif
+
     const database_req req(database_name);
 
     std::vector<value> values;
@@ -230,6 +256,10 @@ void restapp::export_data() const {
     }
 
     value json_value = value::array(values);
+
+#ifdef MY_DEBUG
+    cout << "Writing to file." << endl;
+#endif
 
     std::ofstream file("../solutions.json");
 
