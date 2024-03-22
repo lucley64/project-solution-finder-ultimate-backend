@@ -219,8 +219,10 @@ void restapp::handle_get(const http_request& request) const {
         reply_value = value::object(vector<std::pair<string, value>>(solution_map.begin(), solution_map.end()));
     }
 
-
-    auto _ = request.reply(code, reply_value);
+    http_response response(code);
+    response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+    response.set_body(reply_value);
+    auto _ = request.reply(response);
 }
 
 restapp::restapp(std::string database_name): database_name(std::move(database_name)) {
