@@ -64,19 +64,8 @@ def preprocess(string_text):
 
 def semantic_search(df, query):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print('Using device:', device)
-    print()
-    if device.type == 'cuda':
-        print(torch.cuda.get_device_name(0))
-        print('Memory Usage:')
-        print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
-        print('Cached:   ', round(torch.cuda.memory_reserved(0)/1024**3,1), 'GB')
     corpus_embeddings = []
-    # Comparison for the same query
-    # Important : Huge loss of accuracy for paraphrase-multilingual-MiniLM-L12-v2 with query "J'aimerais avoir une régulation optimisée de mon groupe froid"
-    # paraphrase-multilingual-mpnet-base-v2 -> About 50s, highest score on a random run -> About 0.80, note : seems more consistent with the results
-    # paraphrase-multilingual-MiniLM-L12-v2 -> About 18s, highest score on a random run -> About 0.735
-    # embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+    # paraphrase-multilingual-MiniLM-L12-v2
     embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
     query_embedding = embedder.encode(query, convert_to_tensor = True)
     str_sols_text = df.traductiondictionnaire.values
