@@ -1,5 +1,6 @@
 certifi==2024.2.2
 charset-normalizer==3.3.2
+CurrencyConverter==0.17.19
 filelock==3.9.0
 forex-python==1.8
 fsspec==2024.2.0

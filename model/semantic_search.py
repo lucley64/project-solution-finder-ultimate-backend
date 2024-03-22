@@ -88,7 +88,6 @@ def semantic_search(df, query):
     list_nb_sol = []
     for i in range(0, len(results[0])):
         list_nb_sol.append(df.loc[df.index == results[0][i]['corpus_id']].codeappelobjet.values[0])
-    print(list_nb_sol)
     return(list_nb_sol)
 
 dataset_path = "./model/textSolModel.csv"
@@ -108,4 +107,4 @@ ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air
 # ex_query = "Quel gain pour un variateur de vitesse ?"
 # ex_query = "Quelles sont les meilleures solutions pour l'agro-alimentaire ?"
 
-semantic_search(df, ex_query)
+# semantic_search(df, ex_query)
