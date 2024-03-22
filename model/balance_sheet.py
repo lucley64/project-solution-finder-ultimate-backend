@@ -4,7 +4,6 @@ from json import dumps
 from math import isnan
 import semantic_search
 
-
 c = CurrencyConverter()
 
 # Conversions not available in CurrencyConverter
@@ -30,6 +29,7 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
             "financial_gain" : arr_eco_gain_per_sol[i]
         }
         results["data_sol"].append(data_sol)
+    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_currency, df_currencies):
@@ -54,21 +54,24 @@ def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_cu
               and not(isnan(df_costs_one_sol.minicoutrex.values[j])) and not(isnan(df_costs_one_sol.maxicoutrex.values[j]))):
             cost = (df_costs_one_sol.minicoutrex.values[j] + df_costs_one_sol.maxicoutrex.values[j]) / 2
             count = count + 1
-        # Use cost within case study if everything else is unavailable
         else:
-            df_case_study = df_case_studies.loc[df_case_studies.numrex == df_costs_one_sol.coderex.values[j]]
-            if (not(df_case_study.empty)):
-                if (df_case_study.capexrex.values[0] != None and not(isnan(df_case_study.capexrex.values[0]))):
-                    cost = df_case_study.capexrex.values[0]
-                    cost_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
-                    count = count + 1
-                # If no cost registered, then ignore
-                else:
-                    is_ignored = True
-                    cost = 0
-            else:
-                is_ignored = True
-                cost = 0
+            is_ignored = True
+            cost = 0
+        # Use cost within case study if everything else is unavailable
+        # else:
+        #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_costs_one_sol.coderex.values[j]]
+        #     if (not(df_case_study.empty)):
+        #         if (df_case_study.capexrex.values[0] != None and not(isnan(df_case_study.capexrex.values[0]))):
+        #             cost = df_case_study.capexrex.values[0]
+        #             cost_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
+        #             count = count + 1
+        #         # If no cost registered, then ignore
+        #         else:
+        #             is_ignored = True
+        #             cost = 0
+        #     else:
+        #         is_ignored = True
+        #         cost = 0
         if (not(is_ignored) and cost_currency.nummonnaie.values[0] != code_ref_currency):
                 if (not(cost_currency.shortmonnaie.values[0] != cost_currency.shortmonnaie.values[0])):
                     if (cost_currency.shortmonnaie.values[0] not in c.currencies):
@@ -109,21 +112,24 @@ def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_cu
         if (df_gains_one_sol.gainfinanciergainrex.values[j] != None and not(isnan(df_gains_one_sol.gainfinanciergainrex.values[j]))):
             gain = df_gains_one_sol.gainfinanciergainrex.values[j]
             count = count + 1
-        # If unavailable, use gain within case study
         else:
-            df_case_study = df_case_studies.loc[df_case_studies.numrex == df_gains_one_sol.coderex.values[j]]
-            if (not(df_case_study.empty)):
-                if (df_case_study.gainfinancierrex.values[0] != None and not(isnan(df_case_study.gainfinancierrex.values[0]))):
-                    gain = df_case_study.gainfinancierrex.values[0]
-                    gain_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
-                    count = count + 1
-                # If no gain registered, then ignore
-                else:
-                    is_ignored = True
-                    gain = 0
-            else:
-                is_ignored = True
-                gain = 0
+            is_ignored = True
+            gain = 0
+        # If unavailable, use gain within case study
+        # else:
+        #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_gains_one_sol.coderex.values[j]]
+        #     if (not(df_case_study.empty)):
+        #         if (df_case_study.gainfinancierrex.values[0] != None and not(isnan(df_case_study.gainfinancierrex.values[0]))):
+        #             gain = df_case_study.gainfinancierrex.values[0]
+        #             gain_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
+        #             count = count + 1
+        #         # If no gain registered, then ignore
+        #         else:
+        #             is_ignored = True
+        #             gain = 0
+        #     else:
+        #         is_ignored = True
+        #         gain = 0
         if (not(is_ignored) and gain_currency.nummonnaie.values[0] != code_ref_currency):
             if (not(gain_currency.shortmonnaie.values[0] != gain_currency.shortmonnaie.values[0])):
                 if (gain_currency.shortmonnaie.values[0] not in c.currencies):
