@@ -29,6 +29,7 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
             "financial_gain" : arr_eco_gain_per_sol[i]
         }
         results["data_sol"].append(data_sol)
+    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_currency, df_currencies):
@@ -53,6 +54,9 @@ def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_cu
               and not(isnan(df_costs_one_sol.minicoutrex.values[j])) and not(isnan(df_costs_one_sol.maxicoutrex.values[j]))):
             cost = (df_costs_one_sol.minicoutrex.values[j] + df_costs_one_sol.maxicoutrex.values[j]) / 2
             count = count + 1
+        else:
+            is_ignored = True
+            cost = 0
         # Use cost within case study if everything else is unavailable
         # else:
         #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_costs_one_sol.coderex.values[j]]
@@ -108,6 +112,9 @@ def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_cu
         if (df_gains_one_sol.gainfinanciergainrex.values[j] != None and not(isnan(df_gains_one_sol.gainfinanciergainrex.values[j]))):
             gain = df_gains_one_sol.gainfinanciergainrex.values[j]
             count = count + 1
+        else:
+            is_ignored = True
+            gain = 0
         # If unavailable, use gain within case study
         # else:
         #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_gains_one_sol.coderex.values[j]]
