@@ -10,3 +10,6 @@
 
 #venv
 /.venv
+
+#python cache
+/model/__pycache__
