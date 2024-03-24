@@ -29,7 +29,6 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
             "financial_gain" : arr_eco_gain_per_sol[i]
         }
         results["data_sol"].append(data_sol)
-    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
@@ -163,11 +162,8 @@ def handle_unknown_currencies(str_currency_code, value):
 
     return({"total": total, "currency_code": currency_code})
 
-
-
 def energy_balance_sheet(nb_sol, df_case_studies, df_gain_case_studies, ref_currency, df_currencies):
     print()
-
 
 case_studies_dataset = "./model/tblrex.csv"
 gains_dataset = "./model/tblgainrex.csv"
@@ -177,16 +173,6 @@ df_case_studies = read_csv(case_studies_dataset, sep = ',', engine = 'python', q
 df_gain_case_studies = read_csv(gains_dataset, sep = ',', engine = 'python', quotechar = '"')
 df_cost_case_studies = read_csv(costs_dataset, sep = ',', engine = 'python', quotechar = '"')
 df_currencies = read_csv(currencies_dataset, sep = ',', engine = 'python', quotechar = '"')
-
-dataset_path = "./model/textSolModel.csv"
-all_df = read_csv(dataset_path, sep = ',', engine = 'python', quotechar = '"')
-
-df = semantic_search.get_df_one_lang_one_sol_per_row(semantic_search.Language.FRENCH.value, all_df)
-
-df.traductiondictionnaire = df.traductiondictionnaire.apply(semantic_search.preprocess)
-
-# Randomize the rows associated at each index
-df = df.sample(frac = 1).reset_index(drop = True)
 
 ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air comprimé ?"
 # ex_query = "J'aimerais avoir une régulation optimisée de mon groupe froid"
@@ -198,6 +184,15 @@ ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air
 is_corpus_embeddings_to_update = False
 
 if (is_corpus_embeddings_to_update):
+    dataset_path = "./model/textSolModel.csv"
+    all_df = read_csv(dataset_path, sep = ',', engine = 'python', quotechar = '"')
+
+    df = semantic_search.get_df_one_lang_one_sol_per_row(semantic_search.Language.FRENCH.value, all_df)
+
+    df.traductiondictionnaire = df.traductiondictionnaire.apply(semantic_search.preprocess)
+
+    # Randomize the rows associated at each index
+    df = df.sample(frac = 1).reset_index(drop = True)
     semantic_search.encode_text_sols(df)
 
 res = semantic_search.semantic_search(ex_query)
