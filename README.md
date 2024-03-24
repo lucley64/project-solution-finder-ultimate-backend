@@ -22,4 +22,22 @@ The `--export` option is used to export all the solutions in a solutions.json fi
 
 ## Python
 
-TBA
+Create a python virtual environment using for example virtualenv 
+
+To check if virtualenv is already installed : 
+`pip list | grep virtualenv`
+
+If virtualenv does not appear, run : 
+`pip install virtualenv`
+
+Move to the directory containing project-solution-finder-ultimate-backend : 
+`cd path/to/project-solution-finder-ultimate-backend`
+
+To create a virtual environment, execute the following command : 
+`python<version> -m venv <virtual-environment-name>`
+
+Activate the virtual environment : 
+`source virtual-environment-name>/bin/activate`
+
+Download all required librairies : 
+`pip -r model/requirements.txt`
