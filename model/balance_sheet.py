@@ -18,9 +18,9 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
     arr_energy_per_sol = []
     for i in range(0, len(arr_sol_nb)):
         nb_sol = arr_sol_nb[i]
-        avg_cost = eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_currency, df_currencies)
+        avg_cost = eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies)
         arr_eco_cost_per_sol.append(avg_cost)
-        avg_gain = eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_currency, df_currencies)
+        avg_gain = eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies)
         arr_eco_gain_per_sol.append(avg_gain)
     for i in range(0, len(arr_sol_nb)):
         data_sol = {
@@ -32,8 +32,8 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
     print(results)
     return(dumps(results))
 
-def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_currency, df_currencies):
-    # currencyRates = CurrencyRates()
+def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
+    arr_costs = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
     # If the currency is not in the database, use euro by default
     if (code_ref_currency.empty):
@@ -41,7 +41,6 @@ def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_cu
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
     count = 0
-    avg_cost = 0
     df_costs_one_sol = df_cost_case_studies.loc[df_cost_case_studies.codesolution == nb_sol]
     for j in range(0, len(df_costs_one_sol.index)):
         is_ignored = False
@@ -57,21 +56,6 @@ def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_cu
         else:
             is_ignored = True
             cost = 0
-        # Use cost within case study if everything else is unavailable
-        # else:
-        #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_costs_one_sol.coderex.values[j]]
-        #     if (not(df_case_study.empty)):
-        #         if (df_case_study.capexrex.values[0] != None and not(isnan(df_case_study.capexrex.values[0]))):
-        #             cost = df_case_study.capexrex.values[0]
-        #             cost_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
-        #             count = count + 1
-        #         # If no cost registered, then ignore
-        #         else:
-        #             is_ignored = True
-        #             cost = 0
-        #     else:
-        #         is_ignored = True
-        #         cost = 0
         if (not(is_ignored) and cost_currency.nummonnaie.values[0] != code_ref_currency):
                 if (not(cost_currency.shortmonnaie.values[0] != cost_currency.shortmonnaie.values[0])):
                     if (cost_currency.shortmonnaie.values[0] not in c.currencies):
@@ -89,14 +73,26 @@ def eco_cost_bal_sheet_sol(nb_sol, df_case_studies, df_cost_case_studies, ref_cu
                     ref_currency_cost = 0
         else:
             ref_currency_cost = cost
-        avg_cost = avg_cost + ref_currency_cost
+        if (ref_currency_cost != 0):
+            arr_costs.append(ref_currency_cost)
     if (count > 0):
-        avg_cost = float(avg_cost / count)
+        # Calculation for the median
+        # Sort in ascending order
+        arr_costs.sort()
+        # Case even number of values
+        if (count % 2 == 0):
+            index = int((count / 2)) - 1
+            median_cost = float((arr_costs[index] + arr_costs[index + 1]) / 2)
+        # Case odd number of values
+        else:
+            index = int((count + 1) / 2) - 1
+            median_cost = float(arr_costs[index])
     else:
-        avg_cost = None
-    return(avg_cost)
+        median_cost = None
+    return(median_cost)
 
-def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_currency, df_currencies):
+def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies):
+    arr_gains = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
     # If the currency is not in the database, use euro by default
     if (code_ref_currency.empty):
@@ -104,7 +100,6 @@ def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_cu
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
     count = 0
-    avg_gain = 0
     df_gains_one_sol = df_gain_case_studies.loc[df_gain_case_studies.codesolution == nb_sol]
     for j in range(0, len(df_gains_one_sol)):
         is_ignored = False
@@ -115,21 +110,6 @@ def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_cu
         else:
             is_ignored = True
             gain = 0
-        # If unavailable, use gain within case study
-        # else:
-        #     df_case_study = df_case_studies.loc[df_case_studies.numrex == df_gains_one_sol.coderex.values[j]]
-        #     if (not(df_case_study.empty)):
-        #         if (df_case_study.gainfinancierrex.values[0] != None and not(isnan(df_case_study.gainfinancierrex.values[0]))):
-        #             gain = df_case_study.gainfinancierrex.values[0]
-        #             gain_currency = df_currencies.loc[df_currencies.nummonnaie == df_case_study.codemonnaie.values[0]]
-        #             count = count + 1
-        #         # If no gain registered, then ignore
-        #         else:
-        #             is_ignored = True
-        #             gain = 0
-        #     else:
-        #         is_ignored = True
-        #         gain = 0
         if (not(is_ignored) and gain_currency.nummonnaie.values[0] != code_ref_currency):
             if (not(gain_currency.shortmonnaie.values[0] != gain_currency.shortmonnaie.values[0])):
                 if (gain_currency.shortmonnaie.values[0] not in c.currencies):
@@ -147,12 +127,23 @@ def eco_gain_bal_sheet_sol(nb_sol, df_case_studies, df_gain_case_studies, ref_cu
                 ref_currency_gain = 0
         else:
             ref_currency_gain = gain
-        avg_gain = avg_gain + ref_currency_gain
+        if (ref_currency_gain != 0):
+            arr_gains.append(ref_currency_gain)
     if (count > 0):
-        avg_gain = float(avg_gain / count)
+        # Calculation for the median
+        # Sort in ascending order
+        arr_gains.sort()
+        # Case even number of values
+        if (count % 2 == 0):
+            index = int(count / 2) - 1
+            median_gain = float((arr_gains[index] + arr_gains[index + 1]) / 2)
+        # Case odd number of values
+        else:
+            index = int((count + 1) / 2) - 1
+            median_gain = float(arr_gains[index])
     else:
-        avg_gain = None
-    return(avg_gain)
+        median_gain = None
+    return(median_gain)
 
 def handle_unknown_currencies(str_currency_code, value):
     match str_currency_code:
