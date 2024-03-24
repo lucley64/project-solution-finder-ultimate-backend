@@ -3,6 +3,7 @@ from enum import Enum
 from pandas import read_csv, concat, DataFrame
 from sentence_transformers import SentenceTransformer, util
 import torch
+import pickle
 
 class Language(Enum):
     FRENCH = 2
@@ -62,21 +63,39 @@ def preprocess(string_text):
     parsed_text = parsed_text.strip()
     return(parsed_text)
 
-def semantic_search(df, query):
+def encode_text_sols(df):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     corpus_embeddings = []
-    # paraphrase-multilingual-MiniLM-L12-v2
-    embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-    query_embedding = embedder.encode(query, convert_to_tensor = True)
+    arr_nb_sol = []
     str_sols_text = df.traductiondictionnaire.values
     for i in range(0, len(str_sols_text)):
         corpus_embeddings.append(str_sols_text[i])
+        arr_nb_sol.append(df.loc[df.index == i].codeappelobjet.values[0])
+    # paraphrase-multilingual-MiniLM-L12-v2
+    embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
     corpus_embeddings = embedder.encode(corpus_embeddings, convert_to_tensor = True)
+    # Store embeddings on disc
+    with open("./embeddings.pkl", "wb") as fOut:
+        pickle.dump({"arr_nb_sol": arr_nb_sol, "corpus_embeddings": corpus_embeddings}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
+    return(corpus_embeddings)
+
+def semantic_search(query):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # Load embeddings from disc
+    with open("./embeddings.pkl", "rb") as fIn:
+        stored_data = pickle.load(fIn)
+        corpus_embeddings = stored_data["corpus_embeddings"]
+        arr_nb_sol = stored_data["arr_nb_sol"]
+        # stored_sentences = stored_data["sentences"]
+        # stored_embeddings = stored_data["embeddings"]
+    # paraphrase-multilingual-MiniLM-L12-v2
+    embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+    query_embedding = embedder.encode(query, convert_to_tensor = True)
     results = util.semantic_search(query_embedding, corpus_embeddings, top_k = 5)
-    # corpus_id corresponds to the index of the row within df
     list_nb_sol = []
+    # corpus_id corresponds to the index of arr_nb_sol
     for i in range(0, len(results[0])):
-        list_nb_sol.append(df.loc[df.index == results[0][i]['corpus_id']].codeappelobjet.values[0])
+        list_nb_sol.append(arr_nb_sol[results[0][i]['corpus_id']])
     return(list_nb_sol)
 
 dataset_path = "./model/textSolModel.csv"
@@ -96,4 +115,11 @@ ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air
 # ex_query = "Quel gain pour un variateur de vitesse ?"
 # ex_query = "Quelles sont les meilleures solutions pour l'agro-alimentaire ?"
 
+is_corpus_embeddings_to_update = False
+
 # semantic_search(df, ex_query)
+
+if (is_corpus_embeddings_to_update):
+    encode_text_sols(df)
+
+# semantic_search(ex_query)
