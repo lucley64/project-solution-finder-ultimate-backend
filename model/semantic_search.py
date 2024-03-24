@@ -86,8 +86,6 @@ def semantic_search(query):
         stored_data = pickle.load(fIn)
         corpus_embeddings = stored_data["corpus_embeddings"]
         arr_nb_sol = stored_data["arr_nb_sol"]
-        # stored_sentences = stored_data["sentences"]
-        # stored_embeddings = stored_data["embeddings"]
     # paraphrase-multilingual-MiniLM-L12-v2
     embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
     query_embedding = embedder.encode(query, convert_to_tensor = True)
@@ -97,29 +95,3 @@ def semantic_search(query):
     for i in range(0, len(results[0])):
         list_nb_sol.append(arr_nb_sol[results[0][i]['corpus_id']])
     return(list_nb_sol)
-
-dataset_path = "./model/textSolModel.csv"
-all_df = read_csv(dataset_path, sep = ',', engine = 'python', quotechar = '"')
-
-df = get_df_one_lang_one_sol_per_row(Language.FRENCH.value, all_df)
-
-df.traductiondictionnaire = df.traductiondictionnaire.apply(preprocess)
-
-# Randomize the rows associated at each index
-df = df.sample(frac = 1).reset_index(drop = True)
-
-ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air comprimé ?"
-# ex_query = "J'aimerais avoir une régulation optimisée de mon groupe froid"
-# ex_query = "C'est quoi la haute pression flottante"
-# ex_query = "Je voudrais dimensionner un panneau solaire."
-# ex_query = "Quel gain pour un variateur de vitesse ?"
-# ex_query = "Quelles sont les meilleures solutions pour l'agro-alimentaire ?"
-
-is_corpus_embeddings_to_update = False
-
-# semantic_search(df, ex_query)
-
-if (is_corpus_embeddings_to_update):
-    encode_text_sols(df)
-
-# semantic_search(ex_query)
