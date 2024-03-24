@@ -195,6 +195,11 @@ ex_query = "Comment faire pour réduire la consommation de mon compresseur d'air
 # ex_query = "Quel gain pour un variateur de vitesse ?"
 # ex_query = "Quelles sont les meilleures solutions pour l'agro-alimentaire ?"
 
+is_corpus_embeddings_to_update = False
+
+if (is_corpus_embeddings_to_update):
+    semantic_search.encode_text_sols(df)
+
 res = semantic_search.semantic_search(ex_query)
 
 balance_sheet(res, df_case_studies, df_gain_case_studies, df_cost_case_studies, "EUR", df_currencies)
