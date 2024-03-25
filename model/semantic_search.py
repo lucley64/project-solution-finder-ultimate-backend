@@ -1,6 +1,6 @@
 from re import sub
 from enum import Enum
-from pandas import read_csv, concat, DataFrame
+from pandas import concat, DataFrame
 from sentence_transformers import SentenceTransformer, util
 import torch
 import pickle
