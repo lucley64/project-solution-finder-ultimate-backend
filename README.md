@@ -83,5 +83,5 @@ source virtual-environment-name>/bin/activate
 Download all required librairies :
 
 ```Bash
-pip -r model/requirements.txt
+pip install -r model/requirements.txt
 ```
