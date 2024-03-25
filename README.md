@@ -16,44 +16,72 @@ and [sqlite3](https://www.sqlite.org/cintro.html)
 
 1. cpprestsdk:
 
-   If you have apt, run: \
-   `sudo apt update` \
-   `sudo apt install libcpprest-dev`
+   If you have apt, run:
+   ```Bash
+      sudo apt update
+      sudo apt install libcpprest-dev
+   ```
 
-2. sqlite3: 
+2. sqlite3:
 
-    Same for sqlite3: \
-   `sudo apt update` \
-   `sudo apt install sqlite3 libsqlite3-dev`
+   Same for sqlite3:
+   ```Bash
+   sudo apt update
+   sudo apt install sqlite3 libsqlite3-dev
+   ```
 
-To compile, simply execute this command:\
-`cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build-debug`
+To compile, simply execute this command:
+
+```Bash
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build-debug
+```
 
 ### Running
 
 To run the program, run the following command:
-`./cmake-build-debug/project_solution_finder_ultimate_backend <sqlite-database-path> [--export]`
+
+```Bash
+./cmake-build-debug/project_solution_finder_ultimate_backend ./plateforme.db [--export]
+```
 
 The `--export` option is used to export all the solutions in a solutions.json file
 
 ## Python
 
-Create a python virtual environment using for example virtualenv 
+Create a python virtual environment using for example virtualenv
 
-To check if virtualenv is already installed : 
-`pip list | grep virtualenv`
+To check if virtualenv is already installed :
 
-If virtualenv does not appear, run : 
-`pip install virtualenv`
+```Bash
+pip list | grep virtualenv
+```
 
-Move to the directory containing project-solution-finder-ultimate-backend : 
-`cd path/to/project-solution-finder-ultimate-backend`
+If virtualenv does not appear, run :
 
-To create a virtual environment, execute the following command : 
-`python<version> -m venv <virtual-environment-name>`
+```Bash
+pip install virtualenv
+```
 
-Activate the virtual environment : 
-`source virtual-environment-name>/bin/activate`
+Move to the directory containing project-solution-finder-ultimate-backend :
 
-Download all required librairies : 
-`pip -r model/requirements.txt`
+```Bash
+cd path/to/project-solution-finder-ultimate-backend`
+```
+
+To create a virtual environment, execute the following command :
+
+```Bash
+python<version> -m venv <virtual-environment-name>
+```
+
+Activate the virtual environment :
+
+```Bash
+source virtual-environment-name>/bin/activate
+```
+
+Download all required librairies :
+
+```Bash
+pip -r model/requirements.txt
+```
