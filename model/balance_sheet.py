@@ -7,7 +7,7 @@ import semantic_search
 c = CurrencyConverter()
 
 # Conversions not available in CurrencyConverter
-french_franc_to_euro = 0,152449017
+french_franc_to_euro = 0.152449017
 algerian_dinar_to_euro = 0.0068
 
 # ref_currency is the short code for the currency used as reference (EUR, USD, etc.)
