@@ -1,4 +1,3 @@
-from pandas import read_csv
 from currency_converter import CurrencyConverter
 from json import dumps
 from math import isnan
