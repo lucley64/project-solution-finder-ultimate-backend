@@ -29,7 +29,6 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
             "financial_gain" : arr_eco_gain_per_sol[i]
         }
         results["data_sol"].append(data_sol)
-    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
