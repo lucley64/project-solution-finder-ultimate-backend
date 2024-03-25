@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <string>
 #include <cpprest/http_client.h>
 
@@ -16,8 +17,8 @@ int main(const int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-
-    const string database_name = string("file://") + argv[1];
+    const string absolute = std::filesystem::absolute(argv[1]);
+    const string database_name = string("file://") + absolute;
     restapp app(
         database_name);
 

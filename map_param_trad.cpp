@@ -3,12 +3,17 @@
 //
 #include "map_param_trad.h"
 
+#include <filesystem>
 #include <string>
 
 bool map_param_trad::is_init = false;
 web::json::value map_param_trad::map_param = web::json::value();
 
 void map_param_trad::build() {
+
+#ifdef  MY_DEBUG
+    std::cout << std::filesystem::current_path().string() << std::endl;
+#endif
     std::ifstream file(filename);
 
     std::string line;

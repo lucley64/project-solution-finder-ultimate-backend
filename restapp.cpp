@@ -65,11 +65,10 @@ map<string, string> parse_form_input(const string& input) {
  * @param request The content of the request.
  */
 void handle_post(const http_request& request) {
-
     // auto test = request.body().streambuf();
 
 #ifdef MY_DEBUG
-    cout << "Recieving post request"  << endl;
+    cout << "Recieving post request" << endl;
 #endif
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
@@ -118,15 +117,16 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
     solution_map.emplace("solution_details", value::object(
                              vector<std::pair<string, value>>(sol_details.begin(),
                                                               sol_details.end())));
+    std::map<string, value> solution_desc_map;
+    for (auto ret_sol_map = req.get_solution_desc(sol_num, code_lang); const auto& [key, v]: ret_sol_map) {
+        solution_desc_map.emplace(key, v);
+    }
     if (sol_details.contains("codeparentsolution")) {
         const auto code_parent_sol = sol_details.at("codeparentsolution");
 #ifdef MY_DEBUG
         cout << "Collecting data for parent solution no " << code_parent_sol << endl;
 #endif
-        std::map<string, value> solution_desc_map;
-        for (auto ret_sol_map = req.get_solution_desc(sol_num, code_lang); const auto& [key, value]: ret_sol_map) {
-            solution_desc_map.emplace(key, value);
-        }
+
         for (auto ret_parent_sol_map = req.get_solution_desc(code_parent_sol, code_lang); const auto& [key, desc]:
              ret_parent_sol_map) {
             if (!solution_desc_map.contains(key) || solution_desc_map[key] == value("<P>&nbsp;</P>") ||
@@ -135,11 +135,11 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
                 solution_desc_map.emplace(key, desc);
             }
         }
-        solution_map.emplace("solution_descriptions",
-                             value::object(
-                                 vector<std::pair<string, value>>(solution_desc_map.begin(),
-                                                                  solution_desc_map.end())));
     }
+    value v = value::object(
+        vector<std::pair<string, value>>(solution_desc_map.begin(),
+                                         solution_desc_map.end()));
+    solution_map.emplace("solution_descriptions", v);
 
     const auto gains_rex = req.get_gain_rex(sol_num);
     std::vector<std::string> codes_rex;
@@ -230,8 +230,8 @@ restapp::restapp(std::string database_name): database_name(std::move(database_na
     cout << "Initializing app." << endl;
 #endif
     listener = http_listener(address);
-    listener.support(web::http::methods::GET, [this](const http_request& request) { handle_get(request); });
-    listener.support(web::http::methods::POST, handle_post);
+    listener.support(methods::GET, [this](const http_request& request) { handle_get(request); });
+    listener.support(methods::POST, handle_post);
 }
 
 void restapp::start() {
@@ -251,7 +251,7 @@ void restapp::stop() {
 
 void restapp::export_data() const {
 #ifdef MY_DEBUG
-    cout << "Eporting data to ../jolutions.json." << endl;
+    cout << "Eporting data to ./solutions.json." << endl;
 #endif
 
     const database_req req(database_name);
@@ -273,7 +273,7 @@ void restapp::export_data() const {
     cout << "Writing to file." << endl;
 #endif
 
-    std::ofstream file("../solutions.json");
+    std::ofstream file("./solutions.json");
 
     file << json_value.serialize();
 

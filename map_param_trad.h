@@ -8,7 +8,7 @@
 #include <cpprest/json.h>
 
 class map_param_trad {
-    static constexpr auto filename = "../map_params.json";
+    static constexpr auto filename = "./map_params.json";
     static web::json::value map_param;
     static bool is_init;
 
