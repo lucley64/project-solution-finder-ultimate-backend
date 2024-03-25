@@ -10,3 +10,9 @@
 
 #venv
 /.venv
+
+#python cache
+/model/__pycache__
+
+#pickle files
+/*.pkl
