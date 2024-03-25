@@ -2,6 +2,7 @@ from pandas import read_csv
 from currency_converter import CurrencyConverter
 from json import dumps
 from math import isnan
+from pandas import read_csv
 import semantic_search
 
 c = CurrencyConverter()
@@ -29,6 +30,7 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
             "financial_gain" : arr_eco_gain_per_sol[i]
         }
         results["data_sol"].append(data_sol)
+    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
