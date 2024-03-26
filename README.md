@@ -77,11 +77,11 @@ python<version> -m venv <virtual-environment-name>
 Activate the virtual environment :
 
 ```Bash
-source virtual-environment-name>/bin/activate
+source <virtual-environment-name>/bin/activate
 ```
 
 Download all required librairies :
 
 ```Bash
-pip install -r model/requirements.txt
+pip install -r requirements.txt
 ```
