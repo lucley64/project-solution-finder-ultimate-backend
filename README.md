@@ -33,7 +33,7 @@ and [sqlite3](https://www.sqlite.org/cintro.html)
 To compile, simply execute this command:
 
 ```Bash
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S . -B cmake-build-debug
+cmake --build ./cmake-build-debug --target project_solution_finder_ultimate_backend -j 6
 ```
 
 ### Running

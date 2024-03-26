@@ -190,6 +190,10 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
     return solution_map;
 }
 
+value get_model_prediction(string input) {
+
+}
+
 void restapp::handle_get(const http_request& request) const {
 #ifdef MY_DEBUG
     cout << "Reciving get request." << endl;
