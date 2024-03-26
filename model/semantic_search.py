@@ -17,9 +17,9 @@ def get_df_one_lang_one_sol_per_row(code_language, all_df):
     Parameters
     ----------
     code_language : int
-                    The language code
+        The language code
     all_df : pandas.DataFrame
-            A pandas DataFrame containing data from the table tbldictionnaire of the database
+        A pandas DataFrame containing data from the table tbldictionnaire of the database
 
     Returns
     -------
@@ -75,7 +75,7 @@ def preprocess(string_text):
     Parameters
     ----------
     string_text : str
-                text data to preprocess
+        text data to preprocess
 
     Returns
     -------
@@ -124,7 +124,7 @@ def semantic_search(query):
     Parameters
     ----------
     query : str
-            the query to compare to
+        the query to compare to
     
     Returns
         An array containing the top 5 solution numbers
