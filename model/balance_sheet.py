@@ -11,7 +11,29 @@ french_franc_to_euro = 0.152449017
 algerian_dinar_to_euro = 0.0068
 
 # ref_currency is the short code for the currency used as reference (EUR, USD, etc.)
-def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_case_studies, ref_currency, df_currencies):
+def balance_sheet(arr_sol_nb, df_gain_case_studies, df_cost_case_studies, ref_currency, df_currencies):
+    """
+    Returns the balance sheet for each solution number in arr_sol_nb
+
+    Parameters
+    ----------
+    arr_sol_nb : array
+        An array containing the solution numbers
+    df_gain_case_studies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblgainrex of the dataset
+    df_cost_case_studies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblcoutrex of the dataset
+    ref_currency : str
+        The currency code of the currency to use as reference (ex : "EUR", "USD", etc.)
+    df_currencies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblmonnaie of the dataset
+    
+    Returns
+    -------
+    json
+        A json with key "data_sol" associated with an array of json with keys "nb_sol", "financial_cost" and "financial_gain" and their associated value 
+        The value for either"financial_cost" or "financial_gain" can be null
+    """
     results = {"data_sol" : []}
     arr_eco_cost_per_sol = []
     arr_eco_gain_per_sol = []
@@ -32,6 +54,26 @@ def balance_sheet(arr_sol_nb, df_case_studies, df_gain_case_studies, df_cost_cas
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
+    """
+    Calculates the median cost of a solution (using its number) based on its case studies
+
+    Parameters
+    ----------
+    nb_sol : int
+        The solution number
+    df_cost_case_studies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblcoutrex of the dataset
+    ref_currency : str
+        The currency code of the currency to use as reference (ex : "EUR", "USD", etc.)
+    df_currencies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblmonnaie of the dataset
+    
+    Returns
+    -------
+    float :
+        The median cost
+        Can be None if the calculation is not possible
+    """
     arr_costs = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
     # If the currency is not in the database, use euro by default
@@ -91,6 +133,26 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
     return(median_cost)
 
 def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies):
+    """
+    Calculates the median gain of a solution (using its number) based on its case studies
+
+    Parameters
+    ----------
+    nb_sol : int
+        The solution number
+    df_gain_case_studies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblgainrex of the dataset
+    ref_currency : str
+        The currency code of the currency to use as reference (ex : "EUR", "USD", etc.)
+    df_currencies : pandas.DataFrame
+        A pandas Dataframe corresponding to the table tblmonnaie of the dataset
+    
+    Returns
+    -------
+    float :
+        The median gain
+        Can be None if the calculation is not possible
+    """
     arr_gains = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
     # If the currency is not in the database, use euro by default
@@ -145,6 +207,23 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
     return(median_gain)
 
 def handle_unknown_currencies(str_currency_code, value):
+    """
+    Handles cases of unknown currencies within CurrencyConverter library by using rates to euros
+    If the conversion to euros is possible then it is possible afterwards to convert from euros to a target currency known to CurrencyConverter
+
+    Parameters
+    ----------
+    str_currency_code : str
+        The currency code of the currency of value (ex : "EUR", "USD", etc.)
+    value : float
+        The value associated with the currency of currency code str_currency_code
+
+    Returns
+    -------
+    dict
+        Keys are "total" for the new value and "currency_code" for the new currency code
+        The value associated with each key can be None if no conversion is possible
+    """
     match str_currency_code:
         case "FNF":
             total = french_franc_to_euro * value
@@ -197,4 +276,4 @@ if (is_corpus_embeddings_to_update):
 
 res = semantic_search.semantic_search(ex_query)
 
-balance_sheet(res, df_case_studies, df_gain_case_studies, df_cost_case_studies, "EUR", df_currencies)
+balance_sheet(res, df_gain_case_studies, df_cost_case_studies, "EUR", df_currencies)
