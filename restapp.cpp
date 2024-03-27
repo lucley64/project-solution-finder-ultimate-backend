@@ -198,17 +198,17 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
         }
     }
     solution_desc_map.emplace_back(
-        "2", value::object(
+        "fr", value::object(
             vector<std::pair<string, value>>(solution_desc_map_fr.begin(),
                                              solution_desc_map_fr.end()))
     );
     solution_desc_map.emplace_back(
-        "3", value::object(
+        "en", value::object(
             vector<std::pair<string, value>>(solution_desc_map_en.begin(),
                                              solution_desc_map_en.end()))
     );
     solution_desc_map.emplace_back(
-        "4", value::object(
+        "es", value::object(
             vector<std::pair<string, value>>(solution_desc_map_es.begin(),
                                              solution_desc_map_es.end()))
     );
@@ -344,7 +344,7 @@ void restapp::export_data() const {
     tblcoutrexstream <<
             R"("numcoutrex","codesolution","coderex","minicoutrex","maxicoutrex","reelcoutrex","codemonnaiecoutrex","codeunitecoutrex","codedifficulte","codelicense")"
             << endl;
-    textsolmodelstream << R"("codelangue","codeappelobjet","traductiondictionnaire")" << endl;
+    textsolmodelstream << R"("codelangue","indexdictionnaire","codeappelobjet","traductiondictionnaire")" << endl;
     std::set<string> tblrexids, tblgainrexids, tblcoutrexids;
 
     for (const auto solutions = req.get_all_solutions();
@@ -514,11 +514,12 @@ void restapp::export_data() const {
                     }
                 } else if (key == "solution_descriptions") {
                     for (const auto langs = v.as_object(); const auto& [code, descs]: langs) {
-                        for (const auto desc_objs = descs.as_object(); const auto& [_, d]: desc_objs) {
+                        string int_code = code == "fr" ? "2" : code == "en" ? "3" : "4";
+                        for (const auto desc_objs = descs.as_object(); const auto& [index, d]: desc_objs) {
                             string c(d.as_string());
                             replaceAll(c, "\"", "'");
                             replaceAll(c, "\n", " ");
-                            textsolmodelstream << code << "," << solution.at("numsolution") << ",\"" << c << "\"" <<
+                            textsolmodelstream << int_code << "," << index << "," << solution.at("numsolution") << ",\"" << c << "\"" <<
                                     endl;
                         }
                     }
