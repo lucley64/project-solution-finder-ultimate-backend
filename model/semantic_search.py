@@ -4,6 +4,8 @@ from pandas import concat, DataFrame
 from sentence_transformers import SentenceTransformer, util
 import torch
 import pickle
+from safetensors import safe_open
+from safetensors.torch import save_file
 
 class Language(Enum):
     FRENCH = 2
@@ -25,15 +27,13 @@ def get_df_one_lang_one_sol_per_row(code_language, all_df):
     -------
     pandas.DataFrame
         A pandas dataframe for one language and with each line corresponding to a solution
-    
-    
     """
     # Format of the all_df dataframe and returned dataframe
     df = DataFrame(data = {"codelangue" : [], "codeappelobjet" : [], "traductiondictionnaire" : []})
     one_language_df = all_df.loc[all_df.codelangue == code_language]
     one_language_df_length = len(one_language_df.index)
     if (one_language_df_length > 0):
-        code_sol = one_language_df.codeappelobjet[0]
+        code_sol = one_language_df.codeappelobjet.values[0]
         row_start = 0
         row_end = 1
         while (row_end < one_language_df_length):
@@ -113,8 +113,12 @@ def encode_text_sols(df):
     embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
     corpus_embeddings = embedder.encode(corpus_embeddings, convert_to_tensor = True)
     # Store embeddings on disc
-    with open("./embeddings.pkl", "wb") as fOut:
-        pickle.dump({"arr_nb_sol": arr_nb_sol, "corpus_embeddings": corpus_embeddings}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
+    dict = {
+        "corpus_embeddings": corpus_embeddings,
+    }
+    save_file(dict, "./model/corpus_embeddings")
+    with open("./model/arr_nb_sol.pkl", "wb") as fOut:
+        pickle.dump({"arr_nb_sol" : arr_nb_sol}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
 
 def semantic_search(query):
     """
@@ -129,12 +133,21 @@ def semantic_search(query):
     Returns
         An array containing the top 5 solution numbers
     """
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if (torch.cuda.is_available()):
+        device = torch.device('cuda')
+        index_device = device.cuda.current_device()
+    else:
+        device = torch.device('cpu')
+        index_device = "cpu"
     # Load embeddings from disc
-    with open("./embeddings.pkl", "rb") as fIn:
-        stored_data = pickle.load(fIn)
-        corpus_embeddings = stored_data["corpus_embeddings"]
-        arr_nb_sol = stored_data["arr_nb_sol"]
+    stored_data = {}
+    with safe_open("./model/corpus_embeddings", framework = "pt", device = index_device) as f:
+        for key in f.keys():
+            stored_data[key] = f.get_tensor(key)
+    with open("./model/arr_nb_sol.pkl", "rb") as fIn:
+        stored_data_nb_sol = pickle.load(fIn)
+        arr_nb_sol = stored_data_nb_sol["arr_nb_sol"]
+    corpus_embeddings = stored_data["corpus_embeddings"]
     # paraphrase-multilingual-MiniLM-L12-v2
     embedder = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
     query_embedding = embedder.encode(query, convert_to_tensor = True)
