@@ -108,15 +108,15 @@ void handle_post(const http_request& request) {
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
-    // auto _ = get_model_prediction(a["search"], a["lang"], a["currency"]);
-    const value json_rep = value::array(
-        {
-            value::object({{"nb_sol", 12}, {"financial_cost", .5}, {"financial_gain", .5}}),
-            value::object({{"nb_sol", 8}, {"financial_cost", .5}, {"financial_gain", .5}}),
-            value::object({{"nb_sol", 22}, {"financial_cost", .5}, {"financial_gain", .5}}),
-            value::object({{"nb_sol", 42}, {"financial_cost", .5}, {"financial_gain", .5}}),
-            value::object({{"nb_sol", 136}, {"financial_cost", .5}, {"financial_gain", .5}}),
-        });
+    auto json_rep = get_model_prediction(a["search"], a["lang"], a["currency"]);
+    // const value json_rep = value::array(
+    //     {
+    //         value::object({{"nb_sol", 12}, {"financial_cost", .5}, {"financial_gain", .5}}),
+    //         value::object({{"nb_sol", 8}, {"financial_cost", .5}, {"financial_gain", .5}}),
+    //         value::object({{"nb_sol", 22}, {"financial_cost", .5}, {"financial_gain", .5}}),
+    //         value::object({{"nb_sol", 42}, {"financial_cost", .5}, {"financial_gain", .5}}),
+    //         value::object({{"nb_sol", 136}, {"financial_cost", .5}, {"financial_gain", .5}}),
+    //     });
 
     http_response response{status_codes::OK};
 
