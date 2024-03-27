@@ -16,3 +16,6 @@
 
 #pickle files
 /*.pkl
+
+#corpus_embeddings
+/model/corpus_embeddings
