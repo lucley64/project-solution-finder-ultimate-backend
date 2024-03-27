@@ -73,13 +73,13 @@ cd path/to/project-solution-finder-ultimate-backend`
 To create a virtual environment, execute the following command :
 
 ```Bash
-python<version> -m venv <virtual-environment-name>
+python<version> -m venv .venv
 ```
 
 Activate the virtual environment :
 
 ```Bash
-source <virtual-environment-name>/bin/activate
+source .venv/bin/activate
 ```
 
 Download all required librairies :
