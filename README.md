@@ -48,6 +48,8 @@ The `--export` option is used to export all the solutions in a solutions.json fi
 
 ## Python
 
+Python 3.12
+
 Create a python virtual environment using for example virtualenv
 
 To check if virtualenv is already installed :
