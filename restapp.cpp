@@ -71,9 +71,9 @@ map<string, string> parse_form_input(const string& input) {
     return ret;
 }
 
-value get_model_prediction(const string& input) {
+value get_model_prediction(const string& input, const string& lang, const string& currency) {
     // model/balance_sheet.py
-    const auto command = popen(string(".venv/bin/python test.py \"" + input + "\"").c_str(), "r");
+    const auto command = popen(string(".venv/bin/python model/balance_sheet.py \"" + input + "\" \"" + lang + "\" \"" + currency + "\"").c_str(), "r");
 
 
     stringstream ss;
@@ -108,7 +108,7 @@ void handle_post(const http_request& request) {
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
-    auto _ = get_model_prediction(a["search"]);
+    // auto _ = get_model_prediction(a["search"], a["lang"], a["currency"]);
     const value json_rep = value::array(
         {
             value::object({{"nb_sol", 12}, {"financial_cost", .5}, {"financial_gain", .5}}),
