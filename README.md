@@ -87,3 +87,23 @@ Download all required librairies :
 ```Bash
 pip install -r requirements.txt
 ```
+
+<div style="page-break-after: always; visibility: hidden"> \pagebreak </div>
+
+# Citing & Authors of model
+
+> reimers-2019-sentence-bert
+> - Title : [Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks](https://arxiv.org/abs/1908.10084)
+> - Author : Reimers, Nils and Gurevych, Iryna
+> - Booktitle : Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing
+> - Month : November
+> - Year : 2019
+> - Publisher : Association for Computational Linguistics
+
+> reimers-2020-multilingual-sentence-bert
+> - Title : [Making Monolingual Sentence Embeddings Multilingual using Knowledge Distillation](https://arxiv.org/abs/2004.09813)
+> - Author : Reimers, Nils and Gurevych, Iryna
+> - Booktitle : Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing
+> - Month : November
+> - Year : 2020
+> - Publisher : Association for Computational Linguistics
