@@ -62,7 +62,7 @@ map<string, string> parse_form_input(const string& input) {
             const string name = s.substr(0, name_end);
             s.erase(0, name_end + 1);
             if (const size_t end = s.find(delim); end != string::npos) {
-                const string content = s.substr(0, end);
+                const string content = s.substr(4, end - 4);
                 ret.emplace(name, content);
             }
         }
@@ -73,7 +73,7 @@ map<string, string> parse_form_input(const string& input) {
 
 value get_model_prediction(const string& input, const string& lang, const string& currency) {
     // model/balance_sheet.py
-    const auto command = popen(string(".venv/bin/python model/balance_sheet.py \"" + input + "\" \"" + lang + "\" \"" + currency + "\"").c_str(), "r");
+    const auto command = popen(string(".venv/bin/python model/balance_sheet.py \"" + input + "\" \"" /*+ lang + "\" \""*/ + currency + "\"").c_str(), "r");
 
 
     stringstream ss;
