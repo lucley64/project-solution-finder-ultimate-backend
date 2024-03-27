@@ -31,8 +31,18 @@ def balance_sheet(arr_sol_nb, df_gain_case_studies, df_cost_case_studies, ref_cu
     Returns
     -------
     json
-        A json with key "data_sol" associated with an array of json with keys "nb_sol", "financial_cost" and "financial_gain" and their associated value 
-        The value for either"financial_cost" or "financial_gain" can be null
+        A json
+        "data_sol" : array of json with the following keys
+
+        "nb_sol": the solution number
+        "financial_median_cost" : the median cost associated with the solution
+        "financial_max_cost" : the maximum cost associated with the solution
+        "financial_min_cost" : the minimum cost associated with the solution
+        "financial_median_gain" : the median gain associated with the solution
+        "financial_max_gain" : the maximum gain associated with the solution
+        "financial_min_gain" : the minimum gain associated with the solution
+
+        The value associated with each key with the exception of the key "nb_sol" can be null
     """
     results = {"data_sol" : []}
     arr_eco_cost_per_sol = []
@@ -40,15 +50,19 @@ def balance_sheet(arr_sol_nb, df_gain_case_studies, df_cost_case_studies, ref_cu
     arr_energy_per_sol = []
     for i in range(0, len(arr_sol_nb)):
         nb_sol = arr_sol_nb[i]
-        avg_cost = eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies)
-        arr_eco_cost_per_sol.append(avg_cost)
-        avg_gain = eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies)
-        arr_eco_gain_per_sol.append(avg_gain)
+        res_cost = eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies)
+        arr_eco_cost_per_sol.append(res_cost)
+        res_gain = eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies)
+        arr_eco_gain_per_sol.append(res_gain)
     for i in range(0, len(arr_sol_nb)):
         data_sol = {
             "nb_sol": int(arr_sol_nb[i]),
-            "financial_cost" : arr_eco_cost_per_sol[i],
-            "financial_gain" : arr_eco_gain_per_sol[i]
+            "financial_median_cost" : arr_eco_cost_per_sol[i]["median_cost"],
+            "financial_max_cost" : arr_eco_cost_per_sol[i]["max_cost"],
+            "financial_min_cost" : arr_eco_cost_per_sol[i]["min_cost"],
+            "financial_median_gain" : arr_eco_gain_per_sol[i]["median_gain"],
+            "financial_max_gain" : arr_eco_gain_per_sol[i]["max_gain"],
+            "financial_min_gain" : arr_eco_gain_per_sol[i]["min_gain"]
         }
         results["data_sol"].append(data_sol)
     return(dumps(results))
@@ -70,9 +84,12 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
     
     Returns
     -------
-    float :
-        The median cost
-        Can be None if the calculation is not possible
+    dict :
+        "median_cost": the median cost
+        "max_cost": the maximum cost
+        "min_cost": the minimum cost
+        The associated value for each key is a float rounded to the second decimal 
+        or None if the calculation is not possible
     """
     arr_costs = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
@@ -82,6 +99,8 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
     count = 0
+    max_cost = -1
+    min_cost = -1
     df_costs_one_sol = df_cost_case_studies.loc[df_cost_case_studies.codesolution == nb_sol]
     for j in range(0, len(df_costs_one_sol.index)):
         is_ignored = False
@@ -116,6 +135,10 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
             ref_currency_cost = cost
         if (ref_currency_cost != 0):
             arr_costs.append(ref_currency_cost)
+            if (max_cost < ref_currency_cost or max_cost == -1):
+                max_cost = round(ref_currency_cost, 2)
+            if (min_cost > ref_currency_cost or min_cost == -1):
+                min_cost = round(ref_currency_cost, 2)
     if (count > 0):
         # Calculation for the median
         # Sort in ascending order
@@ -123,14 +146,21 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
         # Case even number of values
         if (count % 2 == 0):
             index = int((count / 2)) - 1
-            median_cost = float((arr_costs[index] + arr_costs[index + 1]) / 2)
+            median_cost = round((arr_costs[index] + arr_costs[index + 1]) / 2, 2)
         # Case odd number of values
         else:
             index = int((count + 1) / 2) - 1
-            median_cost = float(arr_costs[index])
+            median_cost = round(arr_costs[index], 2)
     else:
         median_cost = None
-    return(median_cost)
+        max_cost = None
+        min_cost = None
+    res = {
+        "median_cost": median_cost,
+        "max_cost": max_cost,
+        "min_cost": min_cost
+    }
+    return(res)
 
 def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_currencies):
     """
@@ -149,9 +179,12 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
     
     Returns
     -------
-    float :
-        The median gain
-        Can be None if the calculation is not possible
+    dict :
+        "median_gain": the median gain
+        "max_gain": the maximum gain
+        "min_gain": the minimum gain
+        The associated value for each key is a float rounded to the second decimal 
+        or None if the calculation is not possible
     """
     arr_gains = []
     code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == ref_currency]
@@ -161,6 +194,8 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
     count = 0
+    max_gain = -1
+    min_gain = -1
     df_gains_one_sol = df_gain_case_studies.loc[df_gain_case_studies.codesolution == nb_sol]
     for j in range(0, len(df_gains_one_sol)):
         is_ignored = False
@@ -190,6 +225,10 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
             ref_currency_gain = gain
         if (ref_currency_gain != 0):
             arr_gains.append(ref_currency_gain)
+            if (max_gain < ref_currency_gain or max_gain == -1):
+                max_gain = round(ref_currency_gain, 2)
+            if (min_gain > ref_currency_gain or min_gain == -1):
+                min_gain = round(ref_currency_gain, 2)
     if (count > 0):
         # Calculation for the median
         # Sort in ascending order
@@ -197,14 +236,21 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
         # Case even number of values
         if (count % 2 == 0):
             index = int(count / 2) - 1
-            median_gain = float((arr_gains[index] + arr_gains[index + 1]) / 2)
+            median_gain = round((arr_gains[index] + arr_gains[index + 1]) / 2, 2)
         # Case odd number of values
         else:
             index = int((count + 1) / 2) - 1
-            median_gain = float(arr_gains[index])
+            median_gain = round(arr_gains[index], 2)
     else:
         median_gain = None
-    return(median_gain)
+        max_gain = None
+        min_gain = None
+    res = {
+        "median_gain": median_gain,
+        "max_gain": max_gain,
+        "min_gain": min_gain
+    }
+    return(res)
 
 def handle_unknown_currencies(str_currency_code, value):
     """
@@ -243,6 +289,15 @@ def handle_unknown_currencies(str_currency_code, value):
 
 def energy_balance_sheet(nb_sol, df_case_studies, df_gain_case_studies, ref_currency, df_currencies):
     print()
+
+def main():
+    print("tmp")
+    # args = argv[1:]
+    # query = args[0]
+    # arr_sol_nb = semantic_search.semantic_search(query)
+
+if __name__ == "__main__":
+    main()
 
 case_studies_dataset = "./model/tblrex.csv"
 gains_dataset = "./model/tblgainrex.csv"
