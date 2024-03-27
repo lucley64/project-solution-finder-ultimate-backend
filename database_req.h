@@ -32,6 +32,8 @@ public:
 
     [[nodiscard]] std::vector<std::map<const std::string, const std::string>> get_all_solutions() const;
 
+    [[nodiscard]] std::vector<std::map<const std::string, const std::string>> get_tbl_monaie() const;
+
 
     ~database_req();
 };

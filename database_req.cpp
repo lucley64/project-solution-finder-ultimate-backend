@@ -175,6 +175,34 @@ std::vector<std::map<const std::string, const std::string>> database_req::get_al
     return ret_value;
 }
 
+std::vector<std::map<const std::string, const std::string>> database_req::get_tbl_monaie() const {
+    std::vector<std::map<const std::string, const std::string>> ret_value;
+
+    sqlite3_stmt* stmt;
+
+    std::stringstream sql_monaie;
+    sql_monaie << "SELECT * FROM tblmonnaie";
+    const std::string str_sql_monaie = sql_monaie.str();
+
+
+    if (sqlite3_prepare_v2(db, str_sql_monaie.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            std::map<const std::string, const std::string> ret;
+            const int col_count = sqlite3_column_count(stmt);
+            for (int i = 0; i < col_count; i++) {
+                const std::string name = sqlite3_column_name(stmt, i);
+                if (const auto ret_val = sqlite3_column_text(stmt, i); ret_val != nullptr) {
+                    const std::string value = reinterpret_cast<const char *>(ret_val);
+                    ret.emplace(name, value);
+                }
+            }
+            ret_value.push_back(ret);
+        }
+    }
+
+    return ret_value;
+}
+
 
 database_req::~database_req() {
     sqlite3_close(db);

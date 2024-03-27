@@ -6,6 +6,7 @@
 
 #include <charconv>
 #include <iostream>
+#include <set>
 #include <utility>
 
 #include "database_req.h"
@@ -34,6 +35,16 @@ string read_body_to_end(const istream& stream) {
     return ret;
 }
 
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if (from.empty())
+        return;
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
+
 /**
  * Parse a raw formdata and returns a map from this data.
  * @param input The raw form input.
@@ -60,6 +71,30 @@ map<string, string> parse_form_input(const string& input) {
     return ret;
 }
 
+value get_model_prediction(const string& input) {
+    // model/balance_sheet.py
+    const auto command = popen(string(".venv/bin/python test.py \"" + input + "\"").c_str(), "r");
+
+
+    stringstream ss;
+    char c = static_cast<char>(fgetc(command));
+    while (c != EOF) {
+        ss << c;
+        c = static_cast<char>(fgetc(command));
+    }
+
+    pclose(command);
+
+    const string s = ss.str();
+
+#ifdef MY_DEBUG
+    cout << "Recieving json from model: " << s << endl;
+#endif
+
+
+    return value::parse(s);
+}
+
 /**
  * Gets the data from a form and awnser with a json of the data.
  * @param request The content of the request.
@@ -73,6 +108,7 @@ void handle_post(const http_request& request) {
     const auto fd = read_body_to_end(request.body());
     cout << fd << endl;
     auto a = parse_form_input(fd);
+    auto _ = get_model_prediction(a["search"]);
     const value json_rep = value::array(
         {
             value::object({{"nb_sol", 12}, {"financial_cost", .5}, {"financial_gain", .5}}),
@@ -117,9 +153,18 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
     solution_map.emplace("solution_details", value::object(
                              vector<std::pair<string, value>>(sol_details.begin(),
                                                               sol_details.end())));
-    std::map<string, value> solution_desc_map;
-    for (auto ret_sol_map = req.get_solution_desc(sol_num, code_lang); const auto& [key, v]: ret_sol_map) {
-        solution_desc_map.emplace(key, v);
+    vector<pair<string, value>> solution_desc_map;
+    std::map<string, value> solution_desc_map_fr;
+    std::map<string, value> solution_desc_map_en;
+    std::map<string, value> solution_desc_map_es;
+    for (auto ret_sol_map = req.get_solution_desc(sol_num, "2"); const auto& [key, v]: ret_sol_map) {
+        solution_desc_map_fr.emplace(key, v);
+    }
+    for (auto ret_sol_map = req.get_solution_desc(sol_num, "3"); const auto& [key, v]: ret_sol_map) {
+        solution_desc_map_en.emplace(key, v);
+    }
+    for (auto ret_sol_map = req.get_solution_desc(sol_num, "4"); const auto& [key, v]: ret_sol_map) {
+        solution_desc_map_es.emplace(key, v);
     }
     if (sol_details.contains("codeparentsolution")) {
         const auto code_parent_sol = sol_details.at("codeparentsolution");
@@ -127,18 +172,49 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
         cout << "Collecting data for parent solution no " << code_parent_sol << endl;
 #endif
 
-        for (auto ret_parent_sol_map = req.get_solution_desc(code_parent_sol, code_lang); const auto& [key, desc]:
+        for (auto ret_parent_sol_map = req.get_solution_desc(code_parent_sol, "2"); const auto& [key, desc]:
              ret_parent_sol_map) {
-            if (!solution_desc_map.contains(key) || solution_desc_map[key] == value("<P>&nbsp;</P>") ||
-                solution_desc_map[key] ==
+            if (!solution_desc_map_fr.contains(key) || solution_desc_map_fr[key] == value("<P>&nbsp;</P>") ||
+                solution_desc_map_fr[key] ==
                 value("&nbsp;")) {
-                solution_desc_map.emplace(key, desc);
+                solution_desc_map_fr.emplace(key, desc);
+            }
+        }
+        for (auto ret_parent_sol_map = req.get_solution_desc(code_parent_sol, "3"); const auto& [key, desc]:
+             ret_parent_sol_map) {
+            if (!solution_desc_map_en.contains(key) || solution_desc_map_en[key] == value("<P>&nbsp;</P>") ||
+                solution_desc_map_en[key] ==
+                value("&nbsp;")) {
+                solution_desc_map_en.emplace(key, desc);
+            }
+        }
+        for (auto ret_parent_sol_map = req.get_solution_desc(code_parent_sol, "4"); const auto& [key, desc]:
+             ret_parent_sol_map) {
+            if (!solution_desc_map_es.contains(key) || solution_desc_map_es[key] == value("<P>&nbsp;</P>") ||
+                solution_desc_map_es[key] ==
+                value("&nbsp;")) {
+                solution_desc_map_es.emplace(key, desc);
             }
         }
     }
-    value v = value::object(
-        vector<std::pair<string, value>>(solution_desc_map.begin(),
-                                         solution_desc_map.end()));
+    solution_desc_map.emplace_back(
+        "2", value::object(
+            vector<std::pair<string, value>>(solution_desc_map_fr.begin(),
+                                             solution_desc_map_fr.end()))
+    );
+    solution_desc_map.emplace_back(
+        "3", value::object(
+            vector<std::pair<string, value>>(solution_desc_map_en.begin(),
+                                             solution_desc_map_en.end()))
+    );
+    solution_desc_map.emplace_back(
+        "4", value::object(
+            vector<std::pair<string, value>>(solution_desc_map_es.begin(),
+                                             solution_desc_map_es.end()))
+    );
+
+
+    value v = value::object(solution_desc_map);
     solution_map.emplace("solution_descriptions", v);
 
     const auto gains_rex = req.get_gain_rex(sol_num);
@@ -188,10 +264,6 @@ std::map<string, value> do_work(const string& code_lang, const database_req& req
     }
     solution_map.emplace("rex", value::array(rexes));
     return solution_map;
-}
-
-value get_model_prediction(string input) {
-
 }
 
 void restapp::handle_get(const http_request& request) const {
@@ -262,26 +334,232 @@ void restapp::export_data() const {
 
     std::vector<value> values;
 
+    stringstream tblrexstream, tblgainrexstream, tblcoutrexstream, textsolmodelstream;
+    tblrexstream <<
+            R"("numrex","codereference","codepublic","codemonnaie","codetauxmonnaie","gainfinancierrex","gainfinancierperioderex","energierex","codeuniteenergie","codeperiodeenergie","codeenergierex","gesrex","ratiogainrex","trirex","capexrex","capexperioderex","opexrex","codeTechno1","codeTechno2","codeTechno3","codetravaux","codereseau","codelicense","availablelangue")"
+            << endl;
+    tblgainrexstream <<
+            R"("numgainrex","codesolution","coderex","gainfinanciergainrex","codemonnaiegainrex","codeperiodeeconomie","energiegainrex","uniteenergiegainrex","codeperiodeenergie","gesgainrex","minigainrex","maxigainrex","moyengainrex","reelgainrex","trireelgainrex","trimingainrex","trimaxgainrex","codelicense")"
+            << endl;
+    tblcoutrexstream <<
+            R"("numcoutrex","codesolution","coderex","minicoutrex","maxicoutrex","reelcoutrex","codemonnaiecoutrex","codeunitecoutrex","codedifficulte","codelicense")"
+            << endl;
+    textsolmodelstream << R"("codelangue","codeappelobjet","traductiondictionnaire")" << endl;
+    std::set<string> tblrexids, tblgainrexids, tblcoutrexids;
+
     for (const auto solutions = req.get_all_solutions();
          const auto& solution: solutions) {
         if (solution.contains("validsolution") && solution.at("validsolution") == "1") {
             auto solution_map = do_work("2", req, solution);
             values.emplace_back(
                 value::object(std::vector<std::pair<std::string, value>>(solution_map.begin(), solution_map.end())));
+
+
+            for (const auto& [key, v]: solution_map) {
+                if (key == "cout_rex") {
+                    for (const auto cout_rexs = v.as_array(); const auto& cout_rex: cout_rexs) {
+                        if (cout_rex.has_string_field("numcoutrex") && !tblcoutrexids.contains(
+                                cout_rex.at("numcoutrex").as_string())) {
+                            tblcoutrexids.emplace(cout_rex.at("numcoutrex").as_string());
+                            tblcoutrexstream <<
+                                    (cout_rex.has_string_field("numcoutrex")
+                                         ? cout_rex.at("numcoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("codesolution")
+                                         ? cout_rex.at("codesolution").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("coderex") ? cout_rex.at("coderex").as_string() : "NULL")
+                                    << "," <<
+                                    (cout_rex.has_string_field("minicoutrex")
+                                         ? cout_rex.at("minicoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("maxicoutrex")
+                                         ? cout_rex.at("maxicoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("reelcoutrex")
+                                         ? cout_rex.at("reelcoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("codemonnaiecoutrex")
+                                         ? cout_rex.at("codemonnaiecoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("codeunitecoutrex")
+                                         ? cout_rex.at("codeunitecoutrex").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("codedifficulte")
+                                         ? cout_rex.at("codedifficulte").as_string()
+                                         : "NULL") << "," <<
+                                    (cout_rex.has_string_field("codelicense")
+                                         ? cout_rex.at("codelicense").as_string()
+                                         : "NULL") << endl;
+                        }
+                    }
+                } else if (key == "gain_rex") {
+                    for (const auto gain_rexs = v.as_array(); const auto& gain_rex: gain_rexs) {
+                        if (gain_rex.has_string_field("numgainrex") && !tblgainrexids.contains(
+                                gain_rex.at("numgainrex").as_string())) {
+                            tblgainrexids.emplace(gain_rex.at("numgainrex").as_string());
+                            tblgainrexstream <<
+                                    (gain_rex.has_string_field("numgainrex")
+                                         ? gain_rex.at("numgainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("codesolution")
+                                         ? gain_rex.at("codesolution").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("coderex") ? gain_rex.at("coderex").as_string() : "NULL")
+                                    << "," <<
+                                    (gain_rex.has_string_field("gainfinanciergainrex")
+                                         ? gain_rex.at("gainfinanciergainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("codemonnaiegainrex")
+                                         ? gain_rex.at("codemonnaiegainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("codeperiodeeconomie")
+                                         ? gain_rex.at("codeperiodeeconomie").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("energiegainrex")
+                                         ? gain_rex.at("energiegainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("uniteenergiegainrex")
+                                         ? gain_rex.at("uniteenergiegainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("codeperiodeenergie")
+                                         ? gain_rex.at("codeperiodeenergie").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("gesgainrex")
+                                         ? gain_rex.at("gesgainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("minigainrex")
+                                         ? gain_rex.at("minigainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("maxigainrex")
+                                         ? gain_rex.at("maxigainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("moyengainrex")
+                                         ? gain_rex.at("moyengainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("reelgainrex")
+                                         ? gain_rex.at("reelgainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("trireelgainrex")
+                                         ? gain_rex.at("trireelgainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("trimingainrex")
+                                         ? gain_rex.at("trimingainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("trimaxgainrex")
+                                         ? gain_rex.at("trimaxgainrex").as_string()
+                                         : "NULL") << "," <<
+                                    (gain_rex.has_string_field("codelicense")
+                                         ? gain_rex.at("codelicense").as_string()
+                                         : "NULL") << endl;
+                        }
+                    }
+                } else if (key == "rex") {
+                    for (const auto rexs = v.as_array(); const auto& rex: rexs) {
+                        if (rex.has_string_field("numrex") && !tblrexids.contains(rex.at("numrex").as_string())) {
+                            tblrexids.emplace(rex.at("numrex").as_string());
+                            tblrexstream <<
+                                    (rex.has_string_field("numrex") ? rex.at("numrex").as_string() : "NULL") << "," <<
+                                    (rex.has_string_field("codereference")
+                                         ? rex.at("codereference").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("codepublic") ? rex.at("codepublic").as_string() : "NULL") <<
+                                    "," <<
+                                    (rex.has_string_field("codemonnaie") ? rex.at("codemonnaie").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("codetauxmonnaie")
+                                         ? rex.at("codetauxmonnaie").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("gainfinancierrex")
+                                         ? rex.at("gainfinancierrex").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("gainfinancierperioderex")
+                                         ? rex.at("gainfinancierperioderex").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("energierex") ? rex.at("energierex").as_string() : "NULL") <<
+                                    "," <<
+                                    (rex.has_string_field("codeuniteenergie")
+                                         ? rex.at("codeuniteenergie").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("codeperiodeenergie")
+                                         ? rex.at("codeperiodeenergie").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("codeenergierex")
+                                         ? rex.at("codeenergierex").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("gesrex") ? rex.at("gesrex").as_string() : "NULL") << "," <<
+                                    (rex.has_string_field("ratiogainrex") ? rex.at("ratiogainrex").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("trirex") ? rex.at("trirex").as_string() : "NULL") << "," <<
+                                    (rex.has_string_field("capexrex") ? rex.at("capexrex").as_string() : "NULL") << ","
+                                    <<
+                                    (rex.has_string_field("capexperioderex")
+                                         ? rex.at("capexperioderex").as_string()
+                                         : "NULL") << "," <<
+                                    (rex.has_string_field("opexrex") ? rex.at("opexrex").as_string() : "NULL") << "," <<
+                                    (rex.has_string_field("codeTechno1") ? rex.at("codeTechno1").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("codeTechno2") ? rex.at("codeTechno2").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("codeTechno3") ? rex.at("codeTechno3").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("codetravaux") ? rex.at("codetravaux").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("codereseau") ? rex.at("codereseau").as_string() : "NULL") <<
+                                    "," <<
+                                    (rex.has_string_field("codelicense") ? rex.at("codelicense").as_string() : "NULL")
+                                    << "," <<
+                                    (rex.has_string_field("availablelangue")
+                                         ? rex.at("availablelangue").as_string()
+                                         : "NULL") << endl;
+                        }
+                    }
+                } else if (key == "solution_descriptions") {
+                    for (const auto langs = v.as_object(); const auto& [code, descs]: langs) {
+                        for (const auto desc_objs = descs.as_object(); const auto& [_, d]: desc_objs) {
+                            string c(d.as_string());
+                            replaceAll(c, "\"", "'");
+                            replaceAll(c, "\n", " ");
+                            textsolmodelstream << code << "," << solution.at("numsolution") << ",\"" << c << "\"" <<
+                                    endl;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    value json_value = value::array(values);
+    stringstream tblmonnaiestream;
+    tblmonnaiestream << R"("nummonnaie","shortmonnaie")" << endl;
+
+    for (const auto map_monnaie = req.get_tbl_monaie(); const auto& monnaie: map_monnaie) {
+        tblmonnaiestream << monnaie.at("nummonnaie") << "," <<
+                (monnaie.contains("shortmonnaie") ? monnaie.at("shortmonnaie") : "NULL") << endl;
+    }
+
 
 #ifdef MY_DEBUG
-    cout << "Writing to file." << endl;
+    cout << "Writing to files." << endl;
 #endif
 
-    std::ofstream file("./solutions.json");
 
-    file << json_value.serialize();
+    std::ofstream tblcoutrex("./model/tblcoutrex.csv");
+    tblcoutrex << tblcoutrexstream.str();
+    std::ofstream tblgainrex("./model/tblgainrex.csv");
+    tblgainrex << tblgainrexstream.str();
+    std::ofstream tblrex("./model/tblrex.csv");
+    tblrex << tblrexstream.str();
+    std::ofstream textsolmodel("./model/textSolModel.csv");
+    textsolmodel << textsolmodelstream.str();
+    std::ofstream tblmonnaie("./model/tblmonnaie.csv");
+    tblmonnaie << tblmonnaiestream.str();
 
-    file.close();
+
+    tblcoutrex.close();
+    tblgainrex.close();
+    tblrex.close();
+    textsolmodel.close();
+    tblmonnaie.close();
 }
 
 restapp::~restapp() = default;
