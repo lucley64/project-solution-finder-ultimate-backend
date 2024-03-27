@@ -65,6 +65,7 @@ def balance_sheet(arr_sol_nb, df_gain_case_studies, df_cost_case_studies, ref_cu
             "financial_min_gain" : arr_eco_gain_per_sol[i]["min_gain"]
         }
         results["data_sol"].append(data_sol)
+    print(results)
     return(dumps(results))
 
 def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_currencies):
@@ -299,11 +300,10 @@ def main():
 if __name__ == "__main__":
     main()
 
-case_studies_dataset = "./model/tblrex.csv"
 gains_dataset = "./model/tblgainrex.csv"
 costs_dataset = "./model/tblcoutrex.csv"
 currencies_dataset = "./model/tblmonnaie.csv"
-df_case_studies = read_csv(case_studies_dataset, sep = ',', engine = 'python', quotechar = '"')
+
 df_gain_case_studies = read_csv(gains_dataset, sep = ',', engine = 'python', quotechar = '"')
 df_cost_case_studies = read_csv(costs_dataset, sep = ',', engine = 'python', quotechar = '"')
 df_currencies = read_csv(currencies_dataset, sep = ',', engine = 'python', quotechar = '"')
@@ -321,12 +321,16 @@ if (is_corpus_embeddings_to_update):
     dataset_path = "./model/textSolModel.csv"
     all_df = read_csv(dataset_path, sep = ',', engine = 'python', quotechar = '"')
 
+    # Takes only text corresponding to the name of the solution and its definition (as written in map_params.json)
+    # all_df = all_df.loc[(all_df.indexdictionnaire == "nomsolution") | (all_df.indexdictionnaire == "principesolution")]
+
     df = semantic_search.get_df_one_lang_one_sol_per_row(semantic_search.Language.FRENCH.value, all_df)
 
     df.traductiondictionnaire = df.traductiondictionnaire.apply(semantic_search.preprocess)
 
     # Randomize the rows associated at each index
     df = df.sample(frac = 1).reset_index(drop = True)
+
     semantic_search.encode_text_sols(df)
 
 res = semantic_search.semantic_search(ex_query)
