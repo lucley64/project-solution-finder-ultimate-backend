@@ -362,35 +362,35 @@ void restapp::export_data() const {
                                 cout_rex.at("numcoutrex").as_string())) {
                             tblcoutrexids.emplace(cout_rex.at("numcoutrex").as_string());
                             tblcoutrexstream <<
-                                    (cout_rex.has_string_field("numcoutrex")
+                                    "\"" << (cout_rex.has_string_field("numcoutrex")
                                          ? cout_rex.at("numcoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("codesolution")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("codesolution")
                                          ? cout_rex.at("codesolution").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("coderex") ? cout_rex.at("coderex").as_string() : "NULL")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("coderex") ? cout_rex.at("coderex").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (cout_rex.has_string_field("minicoutrex")
+                                    "\"" << (cout_rex.has_string_field("minicoutrex")
                                          ? cout_rex.at("minicoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("maxicoutrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("maxicoutrex")
                                          ? cout_rex.at("maxicoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("reelcoutrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("reelcoutrex")
                                          ? cout_rex.at("reelcoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("codemonnaiecoutrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("codemonnaiecoutrex")
                                          ? cout_rex.at("codemonnaiecoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("codeunitecoutrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("codeunitecoutrex")
                                          ? cout_rex.at("codeunitecoutrex").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("codedifficulte")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("codedifficulte")
                                          ? cout_rex.at("codedifficulte").as_string()
-                                         : "NULL") << "," <<
-                                    (cout_rex.has_string_field("codelicense")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (cout_rex.has_string_field("codelicense")
                                          ? cout_rex.at("codelicense").as_string()
-                                         : "NULL") << endl;
+                                         : "NULL") << "\"" << endl;
                         }
                     }
                 } else if (key == "gain_rex") {
@@ -399,59 +399,59 @@ void restapp::export_data() const {
                                 gain_rex.at("numgainrex").as_string())) {
                             tblgainrexids.emplace(gain_rex.at("numgainrex").as_string());
                             tblgainrexstream <<
-                                    (gain_rex.has_string_field("numgainrex")
+                                    "\"" << (gain_rex.has_string_field("numgainrex")
                                          ? gain_rex.at("numgainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("codesolution")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("codesolution")
                                          ? gain_rex.at("codesolution").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("coderex") ? gain_rex.at("coderex").as_string() : "NULL")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("coderex") ? gain_rex.at("coderex").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (gain_rex.has_string_field("gainfinanciergainrex")
+                                    "\"" << (gain_rex.has_string_field("gainfinanciergainrex")
                                          ? gain_rex.at("gainfinanciergainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("codemonnaiegainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("codemonnaiegainrex")
                                          ? gain_rex.at("codemonnaiegainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("codeperiodeeconomie")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("codeperiodeeconomie")
                                          ? gain_rex.at("codeperiodeeconomie").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("energiegainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("energiegainrex")
                                          ? gain_rex.at("energiegainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("uniteenergiegainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("uniteenergiegainrex")
                                          ? gain_rex.at("uniteenergiegainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("codeperiodeenergie")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("codeperiodeenergie")
                                          ? gain_rex.at("codeperiodeenergie").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("gesgainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("gesgainrex")
                                          ? gain_rex.at("gesgainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("minigainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("minigainrex")
                                          ? gain_rex.at("minigainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("maxigainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("maxigainrex")
                                          ? gain_rex.at("maxigainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("moyengainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("moyengainrex")
                                          ? gain_rex.at("moyengainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("reelgainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("reelgainrex")
                                          ? gain_rex.at("reelgainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("trireelgainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("trireelgainrex")
                                          ? gain_rex.at("trireelgainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("trimingainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("trimingainrex")
                                          ? gain_rex.at("trimingainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("trimaxgainrex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("trimaxgainrex")
                                          ? gain_rex.at("trimaxgainrex").as_string()
-                                         : "NULL") << "," <<
-                                    (gain_rex.has_string_field("codelicense")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (gain_rex.has_string_field("codelicense")
                                          ? gain_rex.at("codelicense").as_string()
-                                         : "NULL") << endl;
+                                         : "NULL") << "\"" << endl;
                         }
                     }
                 } else if (key == "rex") {
@@ -459,59 +459,57 @@ void restapp::export_data() const {
                         if (rex.has_string_field("numrex") && !tblrexids.contains(rex.at("numrex").as_string())) {
                             tblrexids.emplace(rex.at("numrex").as_string());
                             tblrexstream <<
-                                    (rex.has_string_field("numrex") ? rex.at("numrex").as_string() : "NULL") << "," <<
-                                    (rex.has_string_field("codereference")
+                                    "\"" << (rex.has_string_field("numrex") ? rex.at("numrex").as_string() : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("codereference")
                                          ? rex.at("codereference").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("codepublic") ? rex.at("codepublic").as_string() : "NULL") <<
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("codepublic") ? rex.at("codepublic").as_string() : "NULL") << "\"" <<
                                     "," <<
-                                    (rex.has_string_field("codemonnaie") ? rex.at("codemonnaie").as_string() : "NULL")
+                                    "\"" << (rex.has_string_field("codemonnaie") ? rex.at("codemonnaie").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("codetauxmonnaie")
-                                         ? rex.at("codetauxmonnaie").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("gainfinancierrex")
+                                    "\"" << (rex.has_string_field("codetauxmonnaie") ? rex.at("codetauxmonnaie").as_string() : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("gainfinancierrex")
                                          ? rex.at("gainfinancierrex").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("gainfinancierperioderex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("gainfinancierperioderex")
                                          ? rex.at("gainfinancierperioderex").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("energierex") ? rex.at("energierex").as_string() : "NULL") <<
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("energierex") ? rex.at("energierex").as_string() : "NULL") << "\"" <<
                                     "," <<
-                                    (rex.has_string_field("codeuniteenergie")
+                                    "\"" << (rex.has_string_field("codeuniteenergie")
                                          ? rex.at("codeuniteenergie").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("codeperiodeenergie")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("codeperiodeenergie")
                                          ? rex.at("codeperiodeenergie").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("codeenergierex")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("codeenergierex")
                                          ? rex.at("codeenergierex").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("gesrex") ? rex.at("gesrex").as_string() : "NULL") << "," <<
-                                    (rex.has_string_field("ratiogainrex") ? rex.at("ratiogainrex").as_string() : "NULL")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("gesrex") ? rex.at("gesrex").as_string() : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("ratiogainrex") ? rex.at("ratiogainrex").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("trirex") ? rex.at("trirex").as_string() : "NULL") << "," <<
-                                    (rex.has_string_field("capexrex") ? rex.at("capexrex").as_string() : "NULL") << ","
+                                    "\"" << (rex.has_string_field("trirex") ? rex.at("trirex").as_string() : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("capexrex") ? rex.at("capexrex").as_string() : "NULL") << "\"" << ","
                                     <<
-                                    (rex.has_string_field("capexperioderex")
+                                    "\"" << (rex.has_string_field("capexperioderex")
                                          ? rex.at("capexperioderex").as_string()
-                                         : "NULL") << "," <<
-                                    (rex.has_string_field("opexrex") ? rex.at("opexrex").as_string() : "NULL") << "," <<
-                                    (rex.has_string_field("codeTechno1") ? rex.at("codeTechno1").as_string() : "NULL")
+                                         : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("opexrex") ? rex.at("opexrex").as_string() : "NULL") << "\"" << "," <<
+                                    "\"" << (rex.has_string_field("codeTechno1") ? rex.at("codeTechno1").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("codeTechno2") ? rex.at("codeTechno2").as_string() : "NULL")
+                                    "\"" << (rex.has_string_field("codeTechno2") ? rex.at("codeTechno2").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("codeTechno3") ? rex.at("codeTechno3").as_string() : "NULL")
+                                    "\"" << (rex.has_string_field("codeTechno3") ? rex.at("codeTechno3").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("codetravaux") ? rex.at("codetravaux").as_string() : "NULL")
+                                    "\"" << (rex.has_string_field("codetravaux") ? rex.at("codetravaux").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("codereseau") ? rex.at("codereseau").as_string() : "NULL") <<
+                                    "\"" << (rex.has_string_field("codereseau") ? rex.at("codereseau").as_string() : "NULL") << "\"" <<
                                     "," <<
-                                    (rex.has_string_field("codelicense") ? rex.at("codelicense").as_string() : "NULL")
+                                    "\"" << (rex.has_string_field("codelicense") ? rex.at("codelicense").as_string() : "NULL") << "\""
                                     << "," <<
-                                    (rex.has_string_field("availablelangue")
+                                    "\"" << (rex.has_string_field("availablelangue")
                                          ? rex.at("availablelangue").as_string()
-                                         : "NULL") << endl;
+                                         : "NULL") << "\"" << endl;
                         }
                     }
                 } else if (key == "solution_descriptions") {
