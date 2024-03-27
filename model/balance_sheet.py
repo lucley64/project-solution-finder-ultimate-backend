@@ -99,7 +99,6 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
         code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == "EUR"].values[0]
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
-    count = 0
     max_cost = -1
     min_cost = -1
     df_costs_one_sol = df_cost_case_studies.loc[df_cost_case_studies.codesolution == nb_sol]
@@ -108,12 +107,10 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
         cost_currency = df_currencies.loc[df_currencies.nummonnaie == df_costs_one_sol.codemonnaiecoutrex.values[j]]
         if (df_costs_one_sol.reelcoutrex.values[j] != None and not(isnan(df_costs_one_sol.reelcoutrex.values[j]))):
             cost = df_costs_one_sol.reelcoutrex.values[j]
-            count = count + 1
         # If real cost unavailable, use min and max cost instead if available
         elif (df_costs_one_sol.minicoutrex.values[j] != None and df_costs_one_sol.maxicoutrex.values[j] != None
               and not(isnan(df_costs_one_sol.minicoutrex.values[j])) and not(isnan(df_costs_one_sol.maxicoutrex.values[j]))):
             cost = (df_costs_one_sol.minicoutrex.values[j] + df_costs_one_sol.maxicoutrex.values[j]) / 2
-            count = count + 1
         else:
             is_ignored = True
             cost = 0
@@ -124,13 +121,11 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
                         if (res["total"] != None):
                             ref_currency_cost = c.convert(res["total"], res["currency_code"], ref_currency)
                         else:
-                            count = count - 1
                             ref_currency_cost = 0
                     else:
                         ref_currency_cost = c.convert(cost, cost_currency.shortmonnaie.values[0], ref_currency)
                 # No currency associated, give up on value
                 else:
-                    count = count - 1
                     ref_currency_cost = 0
         else:
             ref_currency_cost = cost
@@ -140,6 +135,7 @@ def eco_cost_bal_sheet_sol(nb_sol, df_cost_case_studies, ref_currency, df_curren
                 max_cost = round(ref_currency_cost, 2)
             if (min_cost > ref_currency_cost or min_cost == -1):
                 min_cost = round(ref_currency_cost, 2)
+    count = len(arr_costs)
     if (count > 0):
         # Calculation for the median
         # Sort in ascending order
@@ -194,7 +190,6 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
         code_ref_currency = df_currencies.loc[df_currencies.shortmonnaie == "EUR"].values[0]
     else:
         code_ref_currency = code_ref_currency.nummonnaie.values[0]
-    count = 0
     max_gain = -1
     min_gain = -1
     df_gains_one_sol = df_gain_case_studies.loc[df_gain_case_studies.codesolution == nb_sol]
@@ -203,7 +198,6 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
         gain_currency = df_currencies.loc[df_currencies.nummonnaie == df_gains_one_sol.codemonnaiegainrex.values[j]]
         if (df_gains_one_sol.gainfinanciergainrex.values[j] != None and not(isnan(df_gains_one_sol.gainfinanciergainrex.values[j]))):
             gain = df_gains_one_sol.gainfinanciergainrex.values[j]
-            count = count + 1
         else:
             is_ignored = True
             gain = 0
@@ -214,13 +208,11 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
                     if (res["total"] != None):
                         ref_currency_gain = c.convert(res["total"], res["currency_code"], ref_currency)
                     else:
-                        count = count - 1
                         ref_currency_gain = 0
                 else:
                     ref_currency_gain = c.convert(gain, gain_currency.shortmonnaie.values[0], ref_currency)
             # No currency associated, give up on value
             else:
-                count = count - 1
                 ref_currency_gain = 0
         else:
             ref_currency_gain = gain
@@ -230,6 +222,7 @@ def eco_gain_bal_sheet_sol(nb_sol, df_gain_case_studies, ref_currency, df_curren
                 max_gain = round(ref_currency_gain, 2)
             if (min_gain > ref_currency_gain or min_gain == -1):
                 min_gain = round(ref_currency_gain, 2)
+    count = len(arr_gains)
     if (count > 0):
         # Calculation for the median
         # Sort in ascending order
