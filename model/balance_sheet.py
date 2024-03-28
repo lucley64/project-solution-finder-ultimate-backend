@@ -3,6 +3,7 @@ from json import dumps
 from math import isnan
 from pandas import read_csv
 from sys import argv, exit
+import os.path
 import semantic_search
 
 c = CurrencyConverter()
@@ -307,10 +308,13 @@ def main():
     print(results)
     return(0)
 
-if __name__ == "__main__":
-    main()
+path_embeddings = "./model/corpus_embeddings"
+path_pickle = "./model/arr_nb_sol.pkl"
 
 is_corpus_embeddings_to_update = False
+
+if (not(os.path.isfile(path_embeddings)) or not(os.path.isfile(path_pickle))):
+    is_corpus_embeddings_to_update = True
 
 if (is_corpus_embeddings_to_update):
     dataset_path = "./model/textSolModel.csv"
@@ -328,3 +332,6 @@ if (is_corpus_embeddings_to_update):
     df = df.sample(frac = 1).reset_index(drop = True)
 
     semantic_search.encode_text_sols(df)
+
+if __name__ == "__main__":
+    main()
